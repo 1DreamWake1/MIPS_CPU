@@ -32,13 +32,22 @@ module InstMem(ce, addr, data);
 	/* private */
 	reg[`WIDTH_ROM-1:0] romFile [`DEPTH_ROM-1:0];
 
+	/* 模块初始化 */
 	initial begin
+
+		/* 输出高阻态 */
 		data = {`WIDTH_ROM{1'bz}};
+		/* 读取InstMemFile.txt初始化ROM指令存储器 */
 		$readmemh("MemFile/InstMemFile.txt", romFile);
+
 	end
 
+	/* 功能 */
 	always@(*) begin
+
+		/* 当ce有效输出addr对应的数据，否则输出高阻态 */
 		data = ce ? romFile[addr] : {`WIDTH_ROM{1'bz}};
+		
 	end
 
 endmodule
