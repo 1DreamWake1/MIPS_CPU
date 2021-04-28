@@ -1,4 +1,15 @@
-/* 2021 04/28/21 12:16:08 */
+/**
+ * @file	test_bench.v
+ * @author	LiuChuanXi
+ * @date	2021.04.28
+ * @version	V1.0
+ * @brief	MIPS_CPU顶层测试模块
+ * @par	修改日志
+ * <table>
+ * <tr><th>Date			<th>Version		<th>Author		<th>Description
+ * <tr><td>2021.04.28	<td>V1.0		<td>LiuChuanXi	<td>创建初始版本
+ * </table>
+ */
 
 `timescale 1ns/1ns
 
