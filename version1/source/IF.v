@@ -29,7 +29,7 @@ module IF(clk, rst, pc, romCe);
 	input wire clk;
 	input wire rst;
 	/* output */
-	output reg[`PC_LENGTH] pc;
+	output reg[`PC_LENGTH-1:0] pc;
 	output reg romCe;
 
 	/* 模块初始化 */
