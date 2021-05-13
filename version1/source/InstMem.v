@@ -8,6 +8,7 @@
  * <table>
  * <tr><th>Date			<th>Version		<th>Author		<th>Description
  * <tr><td>2021.04.28	<td>V1.0		<td>LiuChuanXi	<td>创建初始版本
+ * <tr><td>2021.05.13	<td>V1.1		<td>LiuChuanXi	<td>修改输出数据宽度与指令宽度相同
  * </table>
  */
 
@@ -21,6 +22,7 @@
  * @param	ce		input，ROM片选，为1时可读，为0时输出高阻态
  * @param	addr	input，所读取空间的地址
  * @param	data	output，读出的数据
+ * @warning	会输出addr对应的空间以及后续3个空间的值，共32位
  */
 module InstMem(ce, addr, data);
 
@@ -28,7 +30,7 @@ module InstMem(ce, addr, data);
 	input wire ce;
 	input wire[`LEN_ADDR_ROM-1:0] addr;
 	/* output */
-	output reg[`WIDTH_ROM-1:0] data;
+	output reg[`INST_LENGTH-1:0] data;
 	/* private */
 	reg[`WIDTH_ROM-1:0] romFile [`DEPTH_ROM-1:0];
 
@@ -36,7 +38,7 @@ module InstMem(ce, addr, data);
 	initial begin
 
 		/* 输出高阻态 */
-		data = {`WIDTH_ROM{1'bz}};
+		data = {`INST_LENGTH{1'bz}};
 		/* 读取InstMemFile.txt初始化ROM指令存储器 */
 		$readmemh("MemFile/InstMemFile.txt", romFile);
 
@@ -46,7 +48,7 @@ module InstMem(ce, addr, data);
 	always@(*) begin
 
 		/* 当ce有效输出addr对应的数据，否则输出高阻态 */
-		data = ce ? romFile[addr] : {`WIDTH_ROM{1'bz}};
+		data = ce ? {romFile[addr], romFile[addr + 1], romFile[addr + 2], romFile[addr + 3]} : {`INST_LENGTH{1'bz}};
 		
 	end
 
