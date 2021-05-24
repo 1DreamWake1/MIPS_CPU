@@ -1,7 +1,7 @@
 /**
  * @file	ID.vh
  * @author	LiuChuanXi
- * @date	2021.04.29
+ * @date	2021.05.24
  * @version	V1.0
  * @brief	MIPS_CPU指令译码ID模块头文件
  * @par	修改日志
@@ -40,25 +40,26 @@
 
 /* 定义指令的编码 */
 `define CMD_NONE	{`OP_LENGTH{1'b0}}
-`define CMD_SUB		(`CMD_NONE + `OP_LENGTH'h01)
-`define CMD_AND		(`CMD_NONE + `OP_LENGTH'h02)
-`define CMD_OR		(`CMD_NONE + `OP_LENGTH'h03)
-`define CMD_XOR		(`CMD_NONE + `OP_LENGTH'h04)
-`define CMD_SLL		(`CMD_NONE + `OP_LENGTH'h05)
-`define CMD_SRL		(`CMD_NONE + `OP_LENGTH'h06)
-`define CMD_SRA		(`CMD_NONE + `OP_LENGTH'h07)
-`define CMD_JR		(`CMD_NONE + `OP_LENGTH'h08)
-`define CMD_ADDI	(`CMD_NONE + `OP_LENGTH'h09)
-`define CMD_ANDI	(`CMD_NONE + `OP_LENGTH'h0A)
-`define CMD_ORI		(`CMD_NONE + `OP_LENGTH'h0B)
-`define CMD_XORI	(`CMD_NONE + `OP_LENGTH'h0C)
-`define CMD_LW		(`CMD_NONE + `OP_LENGTH'h0D)
-`define CMD_SW		(`CMD_NONE + `OP_LENGTH'h0E)
-`define CMD_BEQ		(`CMD_NONE + `OP_LENGTH'h0F)
-`define CMD_BNE		(`CMD_NONE + `OP_LENGTH'h10)
-`define CMD_LUI		(`CMD_NONE + `OP_LENGTH'h11)
-`define CMD_J		(`CMD_NONE + `OP_LENGTH'h12)
-`define CMD_JAL		(`CMD_NONE + `OP_LENGTH'h13)
+`define CMD_ADD		(`CMD_NONE + `OP_LENGTH'h01)
+`define CMD_SUB		(`CMD_NONE + `OP_LENGTH'h02)
+`define CMD_AND		(`CMD_NONE + `OP_LENGTH'h03)
+`define CMD_OR		(`CMD_NONE + `OP_LENGTH'h04)
+`define CMD_XOR		(`CMD_NONE + `OP_LENGTH'h05)
+`define CMD_SLL		(`CMD_NONE + `OP_LENGTH'h06)
+`define CMD_SRL		(`CMD_NONE + `OP_LENGTH'h07)
+`define CMD_SRA		(`CMD_NONE + `OP_LENGTH'h08)
+`define CMD_JR		(`CMD_NONE + `OP_LENGTH'h09)
+`define CMD_ADDI	(`CMD_NONE + `OP_LENGTH'h0A)
+`define CMD_ANDI	(`CMD_NONE + `OP_LENGTH'h0B)
+`define CMD_ORI		(`CMD_NONE + `OP_LENGTH'h0C)
+`define CMD_XORI	(`CMD_NONE + `OP_LENGTH'h0D)
+`define CMD_LW		(`CMD_NONE + `OP_LENGTH'h0E)
+`define CMD_SW		(`CMD_NONE + `OP_LENGTH'h0F)
+`define CMD_BEQ		(`CMD_NONE + `OP_LENGTH'h10)
+`define CMD_BNE		(`CMD_NONE + `OP_LENGTH'h11)
+`define CMD_LUI		(`CMD_NONE + `OP_LENGTH'h12)
+`define CMD_J		(`CMD_NONE + `OP_LENGTH'h13)
+`define CMD_JAL		(`CMD_NONE + `OP_LENGTH'h14)
 
 
 `endif //__ID_H
