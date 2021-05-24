@@ -22,7 +22,7 @@
  * @param	inst		input，从InstMem读过来的指令
  * @param	regaData_i	input，寄存器A数据输入
  * @param	regbData_i	input，寄存器B数据输入
- * @param	op			output，指令inst的op段，inst[31:26]
+ * @param	op			output，指令译码后对应的指令编码(CMD_XXX)
  * @param	regaData	output，寄存器A数据输出
  * @param	regbData	output，寄存器B数据输出
  * @param	regcWr		output，目的寄存器C写控制信号
@@ -44,7 +44,7 @@ module ID(
 	input wire[`REG_LENGTH-1:0] regaData_i;			//寄存器A数据输入
 	input wire[`REG_LENGTH-1:0] regbData_i;			//寄存器B数据输入
 	/* output 1 */
-	output wire[`OP_LENGTH-1:0] op;					//指令inst的op段，inst[31:26]
+	output reg[`OP_LENGTH-1:0] op;					//指令译码后对应的指令编码(CMD_XXX)
 	output wire[`REG_LENGTH-1:0] regaData;			//寄存器A数据输出
 	output wire[`REG_LENGTH-1:0] regbData;			//寄存器B数据输出
 	output reg regcWr;								//目的寄存器C写控制信号
@@ -55,5 +55,44 @@ module ID(
 	output reg[`REG_ADDR_LEN-1:0] regaAddr;			//寄存器A地址输出
 	output reg[`REG_ADDR_LEN-1:0] regbAddr;			//寄存器B地址输出
 
+	/* 模块初始化 */
+	initial begin
+
+		/* op段输出空指令CMD_NONE */
+		op = `CMD_NONE;
+		/* 寄存器读写控制信号关闭 */
+		regaRd = `DISABLE;
+		regbRd = `DISABLE;
+		regcWr = `DISABLE;
+		/* 寄存器地址清零 */
+		regaAddr = {`REG_ADDR_LEN{1'b0}};
+		regbAddr = {`REG_ADDR_LEN{1'b0}};
+		regcAddr = {`REG_ADDR_LEN{1'b0}};
+
+	end
+
+	/* 功能 */
+	/* 数据线直连 */
+	assign regaData = regaData_i;
+	assign regbData = regbData_i;
+	/* 译码 */
+	always@(*) begin
+
+		/* 复位信号rst有效 */
+		if(ret == `ENABLE) begin
+			/* op段输出空指令CMD_NONE */
+			op = `CMD_NONE;
+			/* 寄存器读写控制信号关闭 */
+			regaRd = `DISABLE;
+			regbRd = `DISABLE;
+			regcWr = `DISABLE;
+			/* 寄存器地址清零 */
+			regaAddr = {`REG_ADDR_LEN{1'b0}};
+			regbAddr = {`REG_ADDR_LEN{1'b0}};
+			regcAddr = {`REG_ADDR_LEN{1'b0}};
+		end
+		
+
+	end
 
 endmodule //module ID
