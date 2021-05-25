@@ -19,6 +19,32 @@
 
 module test_bench();
 
+	/* private */
+	reg clk;
+	reg rst;
+
+
+	/* module */
+	SOC soc_m(
+		.clk(clk), .rst(rst)
+	);
+
+
+	/* 测试模块 */
+	initial begin
+		#0	clk = 1'b0;
+			rst = `ENABLE;
+		#30	rst = `DISABLE;
+
+	end
+
+
+	/* 产生时钟信号clk */
+	always begin
+		#5 clk = ~clk;
+	end
+
+
 	/* Linux下测试模块 */
 `ifdef LINUX_VERILOG
 	initial begin
