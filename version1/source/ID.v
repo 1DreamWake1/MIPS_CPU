@@ -2,7 +2,7 @@
  * @file	ID.vh
  * @author	LiuChuanXi
  * @date	2021.05.25
- * @version	V1.2
+ * @version	V1.3
  * @brief	MIPS_CPU指令译码ID模块
  * @par	修改日志
  * <table>
@@ -10,6 +10,7 @@
  * <tr><td>2021.04.29	<td>V1.0		<td>LiuChuanXi	<td>创建初始版本
  * <tr><td>2021.05.24	<td>V1.1		<td>LiuChuanXi	<td>增加了基础的R型I型指令
  * <tr><td>2021.05.25	<td>V1.2		<td>LiuChuanXi	<td>整理包含头文件
+ * <tr><td>2021.05.25	<td>V1.3		<td>LiuChuanXi	<td>修改指令译码的bug
  * </table>
  */
 
@@ -116,7 +117,7 @@ module ID(
 			regaAddr <= inst[25:21];
 			/* b读使能信号，与地址 */
 			regbRd <= `ENABLE;
-			regaAddr <= inst[20:16];
+			regbAddr <= inst[20:16];
 			/* c写使能信号，与地址 */
 			regcWr <= `ENABLE;
 			regcAddr <= inst[15:11];
@@ -149,7 +150,7 @@ module ID(
 			regaAddr <= inst[25:21];
 			/* b读使能信号，与地址 */
 			regbRd <= `ENABLE;
-			regaAddr <= inst[20:16];
+			regbAddr <= inst[20:16];
 			/* c写使能信号，与地址 */
 			regcWr <= `ENABLE;
 			regcAddr <= inst[15:11];
@@ -182,7 +183,7 @@ module ID(
 			regaAddr <= inst[25:21];
 			/* b读使能信号，与地址 */
 			regbRd <= `ENABLE;
-			regaAddr <= inst[20:16];
+			regbAddr <= inst[20:16];
 			/* c写使能信号，与地址 */
 			regcWr <= `ENABLE;
 			regcAddr <= inst[15:11];
@@ -215,7 +216,7 @@ module ID(
 			regaAddr <= inst[25:21];
 			/* b读使能信号，与地址 */
 			regbRd <= `ENABLE;
-			regaAddr <= inst[20:16];
+			regbAddr <= inst[20:16];
 			/* c写使能信号，与地址 */
 			regcWr <= `ENABLE;
 			regcAddr <= inst[15:11];
@@ -248,7 +249,7 @@ module ID(
 			regaAddr <= inst[25:21];
 			/* b读使能信号，与地址 */
 			regbRd <= `ENABLE;
-			regaAddr <= inst[20:16];
+			regbAddr <= inst[20:16];
 			/* c写使能信号，与地址 */
 			regcWr <= `ENABLE;
 			regcAddr <= inst[15:11];
@@ -277,17 +278,17 @@ module ID(
 			/* op传递CMD操作码 */
 			op <= `CMD_SLL;
 			/* a读使能信号，与地址 */
-			regaRd <= `DISABLE;
-			regaAddr <= {`REG_ADDR_LEN{1'b0}};
-			/* b读使能信号，与地址 */
-			regbRd <= `ENABLE;
+			regaRd <= `ENABLE;
 			regaAddr <= inst[20:16];
+			/* b读使能信号，与地址 */
+			regbRd <= `DISABLE;
+			regbAddr <= {`REG_ADDR_LEN{1'b0}};
 			/* c写使能信号，与地址 */
 			regcWr <= `ENABLE;
 			regcAddr <= inst[15:11];
 			/* 寄存器a和b数据输出 */
 			regaData <= regbData_i;
-			regbData <= {{27{1'b0}} ,inst[10:6]};
+			regbData <= {{27{1'b0}}, inst[10:6]};
 		end
 	end
 
@@ -310,11 +311,11 @@ module ID(
 			/* op传递CMD操作码 */
 			op <= `CMD_SRL;
 			/* a读使能信号，与地址 */
-			regaRd <= `DISABLE;
-			regaAddr <= {`REG_ADDR_LEN{1'b0}};
-			/* b读使能信号，与地址 */
-			regbRd <= `ENABLE;
+			regaRd <= `ENABLE;
 			regaAddr <= inst[20:16];
+			/* b读使能信号，与地址 */
+			regbRd <= `DISABLE;
+			regbAddr <= {`REG_ADDR_LEN{1'b0}};
 			/* c写使能信号，与地址 */
 			regcWr <= `ENABLE;
 			regcAddr <= inst[15:11];
@@ -343,11 +344,11 @@ module ID(
 			/* op传递CMD操作码 */
 			op <= `CMD_SRA;
 			/* a读使能信号，与地址 */
-			regaRd <= `DISABLE;
-			regaAddr <= {`REG_ADDR_LEN{1'b0}};
-			/* b读使能信号，与地址 */
-			regbRd <= `ENABLE;
+			regaRd <= `ENABLE;
 			regaAddr <= inst[20:16];
+			/* b读使能信号，与地址 */
+			regbRd <= `DISABLE;
+			regbAddr <= {`REG_ADDR_LEN{1'b0}};
 			/* c写使能信号，与地址 */
 			regcWr <= `ENABLE;
 			regcAddr <= inst[15:11];
@@ -376,7 +377,7 @@ module ID(
 			regaAddr <= inst[25:21];
 			/* b读使能信号，与地址 */
 			regbRd <= `DISABLE;
-			regaAddr <= {`REG_ADDR_LEN{1'b0}};
+			regbAddr <= {`REG_ADDR_LEN{1'b0}};
 			/* c写使能信号，与地址 */
 			regcWr <= `ENABLE;
 			regcAddr <= inst[20:16];
@@ -405,7 +406,7 @@ module ID(
 			regaAddr <= inst[25:21];
 			/* b读使能信号，与地址 */
 			regbRd <= `DISABLE;
-			regaAddr <= {`REG_ADDR_LEN{1'b0}};
+			regbAddr <= {`REG_ADDR_LEN{1'b0}};
 			/* c写使能信号，与地址 */
 			regcWr <= `ENABLE;
 			regcAddr <= inst[20:16];
@@ -434,7 +435,7 @@ module ID(
 			regaAddr <= inst[25:21];
 			/* b读使能信号，与地址 */
 			regbRd <= `DISABLE;
-			regaAddr <= {`REG_ADDR_LEN{1'b0}};
+			regbAddr <= {`REG_ADDR_LEN{1'b0}};
 			/* c写使能信号，与地址 */
 			regcWr <= `ENABLE;
 			regcAddr <= inst[20:16];
@@ -463,7 +464,7 @@ module ID(
 			regaAddr <= inst[25:21];
 			/* b读使能信号，与地址 */
 			regbRd <= `DISABLE;
-			regaAddr <= {`REG_ADDR_LEN{1'b0}};
+			regbAddr <= {`REG_ADDR_LEN{1'b0}};
 			/* c写使能信号，与地址 */
 			regcWr <= `ENABLE;
 			regcAddr <= inst[20:16];
@@ -484,7 +485,8 @@ module ID(
 	 */
 	always@(*) begin
 		/* 复位信号rst无效 */
-		if((rst == `DISABLE) && (inst[31:26] == 6'b001111)) begin
+		if((rst == `DISABLE) && (inst[31:26] == 6'b001111) && (inst[25:21] == 5'b00000))
+		begin
 			/* op传递CMD操作码 */
 			op <= `CMD_LUI;
 			/* a读使能信号，与地址 */
@@ -492,7 +494,7 @@ module ID(
 			regaAddr <= {`REG_ADDR_LEN{1'b0}};
 			/* b读使能信号，与地址 */
 			regbRd <= `DISABLE;
-			regaAddr <= {`REG_ADDR_LEN{1'b0}};
+			regbAddr <= {`REG_ADDR_LEN{1'b0}};
 			/* c写使能信号，与地址 */
 			regcWr <= `ENABLE;
 			regcAddr <= inst[20:16];
