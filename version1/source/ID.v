@@ -1,19 +1,20 @@
 /**
  * @file	ID.vh
  * @author	LiuChuanXi
- * @date	2021.05.24
- * @version	V1.1
+ * @date	2021.05.25
+ * @version	V1.2
  * @brief	MIPS_CPU指令译码ID模块
  * @par	修改日志
  * <table>
  * <tr><th>Date			<th>Version		<th>Author		<th>Description
  * <tr><td>2021.04.29	<td>V1.0		<td>LiuChuanXi	<td>创建初始版本
  * <tr><td>2021.05.24	<td>V1.1		<td>LiuChuanXi	<td>增加了基础的R型I型指令
+ * <tr><td>2021.05.25	<td>V1.2		<td>LiuChuanXi	<td>整理包含头文件
  * </table>
  */
 
 
-`include "ID.vh"
+`include "MIPS.vh"
 
 
 /**

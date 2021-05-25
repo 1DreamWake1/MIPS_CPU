@@ -1,19 +1,20 @@
 /**
  * @file	RegFile.v
  * @author	LiuChuanXi
- * @date	2021.04.28
- * @version	V1.1
+ * @date	2021.05.25
+ * @version	V1.2
  * @brief	MIPS_CPU寄存器堆(RegFile)模块
  * @par	修改日志
  * <table>
  * <tr><th>Date			<th>Version		<th>Author		<th>Description
  * <tr><td>2021.04.28	<td>V1.0		<td>LiuChuanXi	<td>创建初始版本
  * <tr><td>2021.05.23	<td>V1.1		<td>LiuChuanXi	<td>将读取改为组合逻辑，写入改为时序逻辑
+ * <tr><td>2021.05.25	<td>V1.2		<td>LiuChuanXi	<td>整理包含头文件
  * </table>
  */
 
 
-`include "RegFile.vh"
+`include "MIPS.vh"
 
 
 /**

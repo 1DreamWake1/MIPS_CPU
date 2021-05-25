@@ -12,6 +12,10 @@
  */
 
 
+/* MIPS CPU CORE */
+`include "MIPS.vh"
+/* InstMem指令存储器 */
+`include "InstMem.vh"
 
 module SOC(
 	clk, rst
