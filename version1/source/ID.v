@@ -287,7 +287,7 @@ module ID(
 			regcWr <= `ENABLE;
 			regcAddr <= inst[15:11];
 			/* 寄存器a和b数据输出 */
-			regaData <= regbData_i;
+			regaData <= regaData_i;
 			regbData <= {{27{1'b0}}, inst[10:6]};
 		end
 	end
@@ -320,7 +320,7 @@ module ID(
 			regcWr <= `ENABLE;
 			regcAddr <= inst[15:11];
 			/* 寄存器a和b数据输出 */
-			regaData <= regbData_i;
+			regaData <= regaData_i;
 			regbData <= {{27{1'b0}} ,inst[10:6]};
 		end
 	end
@@ -353,7 +353,7 @@ module ID(
 			regcWr <= `ENABLE;
 			regcAddr <= inst[15:11];
 			/* 寄存器a和b数据输出 */
-			regaData <= regbData_i;
+			regaData <= regaData_i;
 			regbData <= {{27{1'b0}}, inst[10:6]};
 		end
 	end
