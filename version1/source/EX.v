@@ -81,97 +81,118 @@ module EX(
 		if(rst == `DISABLE) begin
 			/* 根据op进行相应运算 */
 			case(op)
-				`CMD_ADD:
+				`CMD_ADD: begin
 					/* 运算 */
 					regcData <= regaData + regbData;
 					/* 目的寄存器写使能信号 */
 					regcWr <= regcWr_i;
 					/* 目的寄存器地址 */
 					regcAddr <= regcAddr_i;
-				`CMD_SUB:
+				end
+				`CMD_SUB: begin
 					/* 运算 */
 					regcData <= regaData - regbData;
 					/* 目的寄存器写使能信号 */
 					regcWr <= regcWr_i;
 					/* 目的寄存器地址 */
 					regcAddr <= regcAddr_i;
-				`CMD_AND:
+				end
+				`CMD_AND: begin
 					/* 运算 */
 					regcData <= regaData & regbData;
 					/* 目的寄存器写使能信号 */
 					regcWr <= regcWr_i;
 					/* 目的寄存器地址 */
 					regcAddr <= regcAddr_i;
-				`CMD_OR:
+				end
+				`CMD_OR: begin
 					/* 运算 */
 					regcData <= regaData | regbData;
 					/* 目的寄存器写使能信号 */
 					regcWr <= regcWr_i;
 					/* 目的寄存器地址 */
 					regcAddr <= regcAddr_i;
-				`CMD_XOR:
+				end
+				`CMD_XOR: begin
 					/* 运算 */
 					regcData <= regaData ^ regbData;
 					/* 目的寄存器写使能信号 */
 					regcWr <= regcWr_i;
 					/* 目的寄存器地址 */
 					regcAddr <= regcAddr_i;
-				`CMD_SLL:
+				end
+				`CMD_SLL: begin
 					/* 运算 */
 					regcData <= regaData << regbData;
 					/* 目的寄存器写使能信号 */
 					regcWr <= regcWr_i;
 					/* 目的寄存器地址 */
 					regcAddr <= regcAddr_i;
-				`CMD_SRL:
+				end
+				`CMD_SRL: begin
 					/* 运算 */
 					regcData <= regaData >> regbData;
 					/* 目的寄存器写使能信号 */
 					regcWr <= regcWr_i;
 					/* 目的寄存器地址 */
 					regcAddr <= regcAddr_i;
-				`CMD_SRA:
+				end
+				`CMD_SRA: begin
 					/* 运算 */
 					regcData <= (regaData >> regbData) | ({`REG_LENGTH{1'b1}} << (`REG_LENGTH - regbData));
 					/* 目的寄存器写使能信号 */
 					regcWr <= regcWr_i;
 					/* 目的寄存器地址 */
 					regcAddr <= regcAddr_i;
-				`CMD_ADDI:
+				end
+				`CMD_ADDI: begin
 					/* 运算 */
 					regcData <= regaData + regbData;
 					/* 目的寄存器写使能信号 */
 					regcWr <= regcWr_i;
 					/* 目的寄存器地址 */
 					regcAddr <= regcAddr_i;
-				`CMD_ANDI:
+				end
+				`CMD_ANDI: begin
 					/* 运算 */
 					regcData <= regaData & regbData;
 					/* 目的寄存器写使能信号 */
 					regcWr <= regcWr_i;
 					/* 目的寄存器地址 */
 					regcAddr <= regcAddr_i;
-				`CMD_ORI:
+				end
+				`CMD_ORI: begin
 					/* 运算 */
 					regcData <= regaData | regbData;
 					/* 目的寄存器写使能信号 */
 					regcWr <= regcWr_i;
 					/* 目的寄存器地址 */
 					regcAddr <= regcAddr_i;
-				`CMD_XORI:
+				end
+				`CMD_XORI: begin
 					/* 运算 */
 					regcData <= regaData ^ regbData;
 					/* 目的寄存器写使能信号 */
 					regcWr <= regcWr_i;
 					/* 目的寄存器地址 */
 					regcAddr <= regcAddr_i;
-				`CMD_LUI:
+				end
+				`CMD_LUI: begin
 					/* 运算 */
 					regcData <= regaData << 16;
 					/* 目的寄存器写使能信号 */
 					regcWr <= regcWr_i;
 					/* 目的寄存器地址 */
 					regcAddr <= regcAddr_i;
+				end
+				default: begin
+					/* 输出全零 */
+					regcData <= {`REG_LENGTH{1'b0}};
+					/* 目的寄存器写使能信号 */
+					regcWr <= `DISABLE;
+					/* 目的寄存器地址 */
+					regcAddr <= {`REG_ADDR_LEN{1'b0}};
+				end
 			endcase
 		end
 	end

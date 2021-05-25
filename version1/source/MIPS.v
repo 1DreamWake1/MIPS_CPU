@@ -35,8 +35,8 @@ module MIPS(
 	input wire rst;
 	input wire[`INST_LENGTH-1:0] inst;
 	/* output */
-	output reg romCe;
-	output reg[`PC_LENGTH-1:0] pc;
+	output wire romCe;
+	output wire[`PC_LENGTH-1:0] pc;
 	
 	/* private */
 	/* ID RegFile */
@@ -59,7 +59,7 @@ module MIPS(
 		.pc(pc), .romCe(romCe)
 	);
 	ID id_m(
-		.rst(rst), .isnt(inst), .regaData_i(regaData_i), .regbData_i(regbData_i),
+		.rst(rst), .inst(inst), .regaData_i(regaData_i), .regbData_i(regbData_i),
 		.op(op), .regaData(regaData), .regbData(regbData), .regcWr(regcWr_i), .regcAddr(regcAddr_i),
 		.regaRd(regaRd), .regbRd(regbRd), .regaAddr(regaAddr), .regbAddr(regbAddr)
 	);

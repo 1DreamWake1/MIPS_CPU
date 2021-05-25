@@ -13,7 +13,7 @@
  */
 
 
-`include "IF.vh"
+`include "MIPS.vh"
 
 
 /**
