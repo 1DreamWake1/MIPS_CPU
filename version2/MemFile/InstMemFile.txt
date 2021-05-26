@@ -1,0 +1,32 @@
+/**
+ * @file	InstMemFile.txt
+ * @author	LiuChuanXi
+ * @date	2021.04.28
+ * @version	V1.0
+ * @brief	指令只读存储器ROM，属于InstMem模块，以十六进制存放指令
+ * @par	修改日志
+ * <table>
+ * <tr><th>Date			<th>Version		<th>Author		<th>Description
+ * <tr><td>2021.04.28	<td>V1.0		<td>LiuChuanXi	<td>创建初始版本
+ * </table>
+ */
+
+
+22 32 00 01		//  addi $18, $17, 1         ; 01: addi $s2,$s1,1 
+22 33 00 02		//  addi $19, $17, 2         ; 02: addi $s3,$s1,2 
+32 54 00 02		//  andi $20, $18, 2         ; 03: andi $s4,$s2,2 
+36 55 00 02		//  ori $21, $18, 2          ; 04: ori $s5,$s2,2 
+3a 56 00 02		//  xori $22, $18, 2         ; 05: xori $s6,$s2,2 
+02 53 b8 20		//  add $23, $18, $19        ; 06: add $s7,$s2,$s3 
+02 72 70 22		//  sub $14, $19, $18        ; 07: sub $t6,$s3,$s2 
+02 53 40 24		//  and $8, $18, $19         ; 08: and $t0,$s2,$s3 
+02 53 48 25		//  or $9, $18, $19          ; 09: or $t1,$s2,$s3 
+02 53 50 26		//  xor $10, $18, $19        ; 10: xor $t2,$s2,$s3 
+00 13 58 c0		//  sll $11, $19, 3          ; 11: sll $t3,$s3,3 
+00 13 60 c2		//  srl $12, $19, 3          ; 12: srl $t4,$s3,3 
+00 13 68 c3		//  sra $13, $19, 3          ; 13: sra $t5,$s3,3
+3c 11 00 01		//  lui $17, 1               ; 14: lui $s1,1 
+00 11 8b c0		//  sll $17, $17, 15         ; 15: sll $s1,$s1,15 
+00 11 91 c2		//  srl $18, $17, 7          ; 16: srl $s2,$s1,7 
+00 11 99 c3		//  sra $19, $17, 7          ; 17: sra $s3,$s1,7 
+
