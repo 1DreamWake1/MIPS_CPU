@@ -2,7 +2,7 @@
  * @file	IF.v
  * @author	LiuChuanXi
  * @date	2021.05.26
- * @version	V2.0
+ * @version	V2.1
  * @brief	MIPS CPU的取指令模块
  * @par	修改日志
  * <table>
@@ -11,6 +11,7 @@
  * <tr><td>2021.05.25	<td>V1.1		<td>LiuChuanXi	<td>整理包含头文件
  * <tr><td>2021.05.25	<td>V1.2		<td>LiuChuanXi	<td>将rst和pc功能分成两个always块，pc初始值改为FC
  * <tr><td>2021.05.26	<td>V2.0		<td>LiuChuanXi	<td>开始version2
+ * <tr><td>2021.05.26	<td>V2.1		<td>LiuChuanXi	<td>增加了对J型指令的支持
  * </table>
  */
 
@@ -44,9 +45,6 @@ module IF(
 	output reg[`PC_LENGTH-1:0] pc;			//程序指针
 	output reg romCe;						//指令存储器的片选使能信号
 
-	/* private */
-	reg[`PC_LENGTH-1:0] nextPC;				//跳转指令功能，跳转地址缓存
-
 
 	/* 模块初始化 */
 	initial begin
@@ -64,8 +62,6 @@ module IF(
 			pc <= ({`PC_LENGTH{1'b0}} - `PC_STEP);
 			/* 指令存储器InstMem模块使能 */
 			romCe <= `DISABLE;
-			/* 跳转指令部分功能关闭 */
-			nextPC <= {`PC_LENGTH{1'b0}};
 		end
 		else begin
 			/* InstMem指令存储器使能信号romCe有效 */
