@@ -1,14 +1,15 @@
 /**
  * @file	EX.v
  * @author	LiuChuanXi
- * @date	2021.05.25
- * @version	V1.1
+ * @date	2021.05.26
+ * @version	V2.0
  * @brief	MIPS_CPU执行模块EX
  * @par	修改日志
  * <table>
  * <tr><th>Date			<th>Version		<th>Author		<th>Description
  * <tr><td>2021.05.24	<td>V1.0		<td>LiuChuanXi	<td>创建初始版本
  * <tr><td>2021.05.25	<td>V1.1		<td>LiuChuanXi	<td>整理包含头文件
+ * <tr><td>2021.05.26	<td>V2.0		<td>LiuChuanXi	<td>开始Version2
  * </table>
  */
 
@@ -180,6 +181,14 @@ module EX(
 				`CMD_LUI: begin
 					/* 运算 */
 					regcData <= regaData << 16;
+					/* 目的寄存器写使能信号 */
+					regcWr <= regcWr_i;
+					/* 目的寄存器地址 */
+					regcAddr <= regcAddr_i;
+				end
+				`CMD_J: begin
+					/* 运算 */
+					regcData <= {`REG_LENGTH{1'b0}};
 					/* 目的寄存器写使能信号 */
 					regcWr <= regcWr_i;
 					/* 目的寄存器地址 */

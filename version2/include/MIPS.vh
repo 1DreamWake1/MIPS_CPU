@@ -1,13 +1,14 @@
 /**
  * @file	MIPS.vh
  * @author	LiuChuanXi
- * @date	2021.05.25
- * @version	V1.0
+ * @date	2021.05.26
+ * @version	V2.0
  * @brief	MIPS所需宏定义文件
  * @par	修改日志
  * <table>
  * <tr><th>Date			<th>Version		<th>Author		<th>Description
  * <tr><td>2021.05.25	<td>V1.0		<td>LiuChuanXi	<td>创建初始版本
+ * <tr><td>2021.05.26	<td>V2.0		<td>LiuChuanXi	<td>开始Version2
  * </table>
  */
 
@@ -27,7 +28,10 @@
 /* PC(程序指针)每次自加多少 */
 `define PC_STEP 4
 /* PC(程序指针)多少位，应该与InstMem中的地址宽度保持一致(`LEN_ADDR_ROM) */
-`define PC_LENGTH	8
+`define PC_LENGTH	32
+/* PC空地址，即当jCe无效的时候jAddr的数值 */
+`define PC_NULL {`PC_LENGTH{1'b0}}
+
 
 /* RegFile */
 /* 寄存器个数，MIPS默认32个 */

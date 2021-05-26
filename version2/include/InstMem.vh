@@ -9,6 +9,7 @@
  * <tr><th>Date			<th>Version		<th>Author		<th>Description
  * <tr><td>2021.04.28	<td>V1.0		<td>LiuChuanXi	<td>创建初始版本
  * <tr><td>2021.05.13	<td>V1.1		<td>LiuChuanXi	<td>修改输出数据宽度与指令宽度相同
+ * <tr><td>2021.05.26	<td>V2.0		<td>LiuChuanXi	<td>开始Version2
  * </table>
  */
 
@@ -18,7 +19,7 @@
 /* ROM的长和宽，以及地址位数 */
 `define WIDTH_ROM		8		//width of the rom
 `define DEPTH_ROM		256		//depth of the rom
-`define LEN_ADDR_ROM	8		//length of the rom address
+`define LEN_ADDR_ROM	32		//length of the rom address
 
 /* 定义输出数据宽度，与指令宽度相同 */
 `ifndef INST_LENGTH

@@ -1,14 +1,15 @@
 /**
  * @file	MIPS.v
  * @author	LiuChuanXi
- * @date	2021.05.25
- * @version	V1.1
+ * @date	2021.05.26
+ * @version	V2.0
  * @brief	MIPS CPU顶层模块
  * @par	修改日志
  * <table>
  * <tr><th>Date			<th>Version		<th>Author		<th>Description
  * <tr><td>2021.05.24	<td>V1.0		<td>LiuChuanXi	<td>创建初始版本
  * <tr><td>2021.05.25	<td>V1.1		<td>LiuChuanXi	<td>整理包含头文件
+ * <tr><td>2021.05.26	<td>V2.0		<td>LiuChuanXi	<td>开始Version2
  * </table>
  */
 
@@ -52,16 +53,21 @@ module MIPS(
 	wire[`REG_LENGTH-1:0] regcData;
 	wire[`REG_ADDR_LEN-1:0] regcAddr;
 	wire regcWr;
+	/* IF ID */
+	wire[`PC_LENGTH-1:0] jAddr;
+	wire jCe;
 
 	/* module */
 	IF if_m(
 		.clk(clk), .rst(rst),
+		.jCe(jCe), .jAddr(jAddr),
 		.pc(pc), .romCe(romCe)
 	);
 	ID id_m(
-		.rst(rst), .inst(inst), .regaData_i(regaData_i), .regbData_i(regbData_i),
+		.rst(rst), .inst(inst), .regaData_i(regaData_i), .regbData_i(regbData_i), .pc(pc),
 		.op(op), .regaData(regaData), .regbData(regbData), .regcWr(regcWr_i), .regcAddr(regcAddr_i),
-		.regaRd(regaRd), .regbRd(regbRd), .regaAddr(regaAddr), .regbAddr(regbAddr)
+		.regaRd(regaRd), .regbRd(regbRd), .regaAddr(regaAddr), .regbAddr(regbAddr),
+		.jCe(jCe), .jAddr(jAddr)
 	);
 	EX ex_m(
 		.rst(rst), .op(op), .regaData(regaData), .regbData(regbData), .regcWr_i(regcWr_i), .regcAddr_i(regcAddr_i),
