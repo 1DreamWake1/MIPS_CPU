@@ -2,7 +2,7 @@
  * @file	ID.vh
  * @author	LiuChuanXi
  * @date	2021.05.26
- * @version	V2.0
+ * @version	V2.2
  * @brief	MIPS_CPU指令译码ID模块
  * @par	修改日志
  * <table>
@@ -12,6 +12,8 @@
  * <tr><td>2021.05.25	<td>V1.2		<td>LiuChuanXi	<td>整理包含头文件
  * <tr><td>2021.05.25	<td>V1.3		<td>LiuChuanXi	<td>修改指令译码的bug
  * <tr><td>2021.05.26	<td>V2.0		<td>LiuChuanXi	<td>开始version2
+ * <tr><td>2021.05.26	<td>V2.1		<td>LiuChuanXi	<td>增加对J型指令的支持
+ * <tr><td>2021.05.26	<td>V2.2		<td>LiuChuanXi	<td>J型指令完成，version2完成
  * </table>
  */
 
@@ -402,6 +404,43 @@ module ID(
 	end
 
 	/**
+	 * instructions		JR
+	 * type				R(J)
+	 * detail			pc <- rs
+	 * inst[31:26]	==	6'b000000
+	 * inst[25:21]	==	rs
+	 * inst[20:16]	==	5'b00000
+	 * inst[15:11]	==	5'b00000
+	 * inst[10:6] 	==	5'b00000
+	 * inst[5:0]	==	6'b001000
+	 */
+	always@(*) begin
+		/* 复位信号rst无效 */
+		if((rst == `DISABLE) && (inst[31:26] == 6'b000000) && (inst[20:16] == 5'b00000)
+			&& (inst[15:11] == 5'b00000) && (inst[10:6] == 5'b00000) && (inst[5:0] == 6'b001000))
+		begin
+			/* op传递CMD操作码 */
+			op <= `CMD_JR;
+			/* a读使能信号，与地址 */
+			regaRd <= `ENABLE;
+			regaAddr <= inst[25:21];
+			/* b读使能信号，与地址 */
+			regbRd <= `DISABLE;
+			regbAddr <= {`REG_ADDR_LEN{1'b0}};
+			/* c写使能信号，与地址 */
+			regcWr <= `DISABLE;
+			regcAddr <= {`REG_ADDR_LEN{1'b0}};
+			/* 寄存器a和b数据输出 */
+			regaData <= {`REG_LENGTH{1'b0}};
+			regbData <= {`REG_LENGTH{1'b0}};
+			/* 跳转指令功能 */
+			/* 注意：这里直接将从寄存器取来的地址最低两位变成2'b00 */
+			jAddr <= {regaData_i[`PC_LENGTH-1:2], 2'b00};
+			jCe <= `ENABLE;
+		end
+	end
+
+	/**
 	 * instructions		ADDI
 	 * type				I
 	 * detail			rt <- rs + immediate
@@ -530,6 +569,70 @@ module ID(
 	end
 
 	/**
+	 * instructions		BEQ
+	 * type				I(J)
+	 * detail			if(rs == rt) pc <- pc + sign_extend({offset, 2'b00})
+	 * inst[31:26]	==	6'b000100
+	 * inst[25:21]	==	rs
+	 * inst[20:16]	==	rt
+	 * inst[15:0]	==	offset
+	 */
+	always@(*) begin
+		/* 复位信号rst无效 */
+		if((rst == `DISABLE) && (inst[31:26] == 6'b000100)) begin
+			/* op传递CMD操作码 */
+			op <= `CMD_BEQ;
+			/* a读使能信号，与地址 */
+			regaRd <= `ENABLE;
+			regaAddr <= inst[25:21];
+			/* b读使能信号，与地址 */
+			regbRd <= `ENABLE;
+			regbAddr <= inst[20:16];
+			/* c写使能信号，与地址 */
+			regcWr <= `DISABLE;
+			regcAddr <= {`REG_ADDR_LEN{1'b0}};
+			/* 寄存器a和b数据输出 */
+			regaData <= {`REG_LENGTH{1'b0}};
+			regbData <= {`REG_LENGTH{1'b0}};
+			/* 跳转指令功能 */
+			jAddr <= (regaData_i == regbData_i) ? (pc + {{14{inst[15]}}, inst[15:0], 2'b00}) : `PC_NULL;
+			jCe <= (regaData_i == regbData_i) ? `ENABLE : `DISABLE;
+		end
+	end
+
+	/**
+	 * instructions		BNE
+	 * type				I(J)
+	 * detail			if(rs != rt) pc <- pc + sign_extend({offset, 2'b00})
+	 * inst[31:26]	==	6'b000101
+	 * inst[25:21]	==	rs
+	 * inst[20:16]	==	rt
+	 * inst[15:0]	==	offset
+	 */
+	always@(*) begin
+		/* 复位信号rst无效 */
+		if((rst == `DISABLE) && (inst[31:26] == 6'b000101)) begin
+			/* op传递CMD操作码 */
+			op <= `CMD_BNE;
+			/* a读使能信号，与地址 */
+			regaRd <= `ENABLE;
+			regaAddr <= inst[25:21];
+			/* b读使能信号，与地址 */
+			regbRd <= `ENABLE;
+			regbAddr <= inst[20:16];
+			/* c写使能信号，与地址 */
+			regcWr <= `DISABLE;
+			regcAddr <= {`REG_ADDR_LEN{1'b0}};
+			/* 寄存器a和b数据输出 */
+			regaData <= {`REG_LENGTH{1'b0}};
+			regbData <= {`REG_LENGTH{1'b0}};
+			/* 跳转指令功能 */
+			jAddr <= (regaData_i != regbData_i) ? (pc + {{14{inst[15]}}, inst[15:0], 2'b00}) : `PC_NULL;
+			jCe <= (regaData_i != regbData_i) ? `ENABLE : `DISABLE;
+		end
+	end
+
+	/**
 	 * instructions		LUI
 	 * type				I
 	 * detail			rt <- immediate << 16
@@ -585,6 +688,38 @@ module ID(
 			regcAddr <= {`REG_ADDR_LEN{1'b0}};
 			/* 寄存器a和b数据输出 */
 			regaData <= {`REG_LENGTH{1'b0}};
+			regbData <= {`REG_LENGTH{1'b0}};
+			/* 跳转指令功能 */
+			jAddr <= {pc[`PC_LENGTH-1:28], inst[25:0], 2'b00};
+			jCe <= `ENABLE;
+		end
+	end
+
+	/**
+	 * instructions		JAL
+	 * type				J
+	 * detail			1. reg[31] <- pc + 4(`PC_STEP)
+	 * detail			2. pc <- {pc[pc_len-1:28], address, 2'b00}
+	 * inst[31:26]	==	6'b000011
+	 * inst[25:0]	==	address
+	 */
+	always@(*) begin
+		/* 复位信号rst无效 */
+		if((rst == `DISABLE) && (inst[31:26] == 6'b000011)) begin
+			/* op传递CMD操作码 */
+			op <= `CMD_JAL;
+			/* a读使能信号，与地址 */
+			regaRd <= `DISABLE;
+			regaAddr <= {`REG_ADDR_LEN{1'b0}};
+			/* b读使能信号，与地址 */
+			regbRd <= `DISABLE;
+			regbAddr <= {`REG_ADDR_LEN{1'b0}};
+			/* c写使能信号，与地址 */
+			regcWr <= `ENABLE;
+			regcAddr <= `REG_ADDR_LEN'h1F;
+			/* 寄存器a和b数据输出 */
+			/* 注意：非流水线下存当前jal指令的下一条指令的地址，即pc+4(`PC_STEP) */
+			regaData <= pc + `PC_STEP;
 			regbData <= {`REG_LENGTH{1'b0}};
 			/* 跳转指令功能 */
 			jAddr <= {pc[`PC_LENGTH-1:28], inst[25:0], 2'b00};
