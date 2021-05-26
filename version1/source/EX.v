@@ -139,7 +139,7 @@ module EX(
 				end
 				`CMD_SRA: begin
 					/* 运算 */
-					regcData <= (regaData >> regbData) | ({`REG_LENGTH{1'b1}} << (`REG_LENGTH - regbData));
+					regcData <= (regaData >> regbData) | ({`REG_LENGTH{regaData[`REG_LENGTH-1]}} << (`REG_LENGTH - regbData));
 					/* 目的寄存器写使能信号 */
 					regcWr <= regcWr_i;
 					/* 目的寄存器地址 */
