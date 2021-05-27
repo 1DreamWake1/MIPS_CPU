@@ -2,12 +2,13 @@
  * @file	DataMem.v
  * @author	LiuChuanXi
  * @date	2021.05.27
- * @version	V3.0
+ * @version	V3.1
  * @brief	数据段DataMem模块
  * @par	修改日志
  * <table>
  * <tr><th>Date			<th>Version		<th>Author		<th>Description
  * <tr><td>2021.05.27	<td>V3.0		<td>LiuChuanXi	<td>创建初始版本
+ * <tr><td>2021.05.27	<td>V3.1		<td>LiuChuanXi	<td>修改存储模式为大端模式
  * </table>
  */
 
@@ -19,6 +20,7 @@
  * @author	LiuChuanXi
  * @brief	DataMem模块，也就是一块RAM
  * @detail	当前版本有效地址空间为[1023:0]，其中[2047:1024]用于IO映射
+ * @detail	使用大端形式存储，即数据高位存在低地址单元
  * @param	clk		input，时钟信号
  * @param	ce		input，RAM片选，为1时可读，为0时输出高阻态
  * @param	we		input，RAM读写控制信号，为0时进行读操作，为1时进行写操作
@@ -62,7 +64,7 @@ module DataMem(
 		/* 片选使能信号ce有效(`ENABLE)，读写控制信号we无效(`DISABLE) */
 		if((ce == `ENABLE) && (we == `DISABLE)) begin
 			/* 警告：这里不检查地址最低两位是否为00 */
-			rdData <= ram[addr];
+			rdData <= {ram[addr], ram[addr+1], ram[addr+2], ram[addr+3]};
 		end
 		else begin
 			/* 除了进行正常读取操作，其余情况一律输出高阻态 */
@@ -75,8 +77,14 @@ module DataMem(
 	always@(posedge clk) begin
 		/* 片选信号ce有效(`ENABLE)，读写控制信号we有效(`ENABLE) */
 		if((ce == `ENABLE) && (we == `ENABLE)) begin
-			/* 警告：这里不检查地址最低两位是否为00 */
-			ram[addr] <= wtData;
+			/**
+			 * 警告：这里不检查地址最低两位是否为00
+			 * 这里使用大端序存储
+			 */
+			ram[addr+0] <= wtData[31:24];
+			ram[addr+1] <= wtData[23:16];
+			ram[addr+2] <= wtData[15:8];
+			ram[addr+3] <= wtData[7:0];
 		end
 	end
 
