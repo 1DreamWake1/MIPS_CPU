@@ -1,8 +1,8 @@
 /**
  * @file	RegFile.v
  * @author	LiuChuanXi
- * @date	2021.05.25
- * @version	V1.2
+ * @date	2021.05.27
+ * @version	V3.0
  * @brief	MIPS_CPU寄存器堆(RegFile)模块
  * @par	修改日志
  * <table>
@@ -10,6 +10,7 @@
  * <tr><td>2021.04.28	<td>V1.0		<td>LiuChuanXi	<td>创建初始版本
  * <tr><td>2021.05.23	<td>V1.1		<td>LiuChuanXi	<td>将读取改为组合逻辑，写入改为时序逻辑
  * <tr><td>2021.05.25	<td>V1.2		<td>LiuChuanXi	<td>整理包含头文件
+ * <tr><td>2021.05.27	<td>V3.0		<td>LiuChuanXi	<td>整理格式和注释
  * </table>
  */
 
@@ -36,38 +37,41 @@
  */
 module RegFile(
 	clk, rst,
-	regaAddr, regaRd, regbAddr, regbRd, we, wAddr, wData,
+	regaAddr, regaRd, regbAddr, regbRd,
+	we, wAddr, wData,
 	regaData, regbData
 );
 
-	/* input */
+	/* input 1 */
 	input wire clk;									//时钟信号
 	input wire rst;									//复位信号
 	input wire[`REG_ADDR_LEN-1:0] regaAddr;			//寄存器A的地址
 	input wire[`REG_ADDR_LEN-1:0] regbAddr;			//寄存器B的地址
 	input wire regaRd;								//寄存器A的读使能信号
 	input wire regbRd;								//寄存器B的读使能信号
+	
+	/* input 2 */
 	input wire we;									//寄存器写回使能信号
 	input wire[`REG_ADDR_LEN-1:0] wAddr;			//写回寄存器地址
 	input wire[`REG_LENGTH-1:0] wData;				//写回寄存器的值
+
 	/* output */
 	output reg[`REG_LENGTH-1:0] regaData;			//寄存器A读出的数据
 	output reg[`REG_LENGTH-1:0] regbData;			//寄存器B读出的数据
+
 	/* private */
 	reg[`REG_LENGTH-1:0] register [`REG_NUM-1:0];	//寄存器register[31:0]
 
+
 	/* 模块初始化 */
 	initial begin
-
 		/* 输出零，等价于输出零号寄存器(register[0])的值 */
 		regaData <= {`REG_LENGTH{1'b0}};
 		regbData <= {`REG_LENGTH{1'b0}};
 		/* 读取RegFile.txt初始化所有寄存器的值 */
 		$readmemh("MemFile/RegFile.txt", register);
-
 	end
 
-	/* 功能 */
 
 	/* 复位信号rst */
 	always@(rst) begin
@@ -81,6 +85,7 @@ module RegFile(
 		end
 	end
 
+
 	/* 读取，组合逻辑 */
 	always@(*) begin
 		/* 复位信号rst无效 */
@@ -90,6 +95,7 @@ module RegFile(
 			regbData = (regbRd == `ENABLE) ? register[regbAddr] : register[0];
 		end
 	end
+
 
 	/* 写入，时序逻辑 */
 	always@(posedge clk) begin
