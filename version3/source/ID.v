@@ -598,7 +598,7 @@ module ID(
 			 * regaData传递的是要load的RAM的地址
 			 * regcAddr为写回到的寄存器的地址(号)
 			 */
-			regaData <= ((regaData_i + {{16{inst[15]}}, inst[15:0]}) | ({`REG_LENGTH{1'b1}}<<2));
+			regaData <= ((regaData_i + {{16{inst[15]}}, inst[15:0]}) & ({`REG_LENGTH{1'b1}}<<2));
 			regbData <= {`REG_LENGTH{1'b0}};
 			/* 跳转指令功能 */
 			jAddr <= `PC_NULL;
@@ -636,7 +636,7 @@ module ID(
 			 * regbData传递的是要写入的值
 			 * regcAddr为写回到的寄存器的地址(号)
 			 */
-			regaData <= ((regaData_i + {{16{inst[15]}}, inst[15:0]}) | ({`REG_LENGTH{1'b1}}<<2));
+			regaData <= ((regaData_i + {{16{inst[15]}}, inst[15:0]}) & ({`REG_LENGTH{1'b1}}<<2));
 			regbData <= regbData_i;
 			/* 跳转指令功能 */
 			jAddr <= `PC_NULL;
