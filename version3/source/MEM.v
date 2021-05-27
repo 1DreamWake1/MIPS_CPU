@@ -7,7 +7,7 @@
  * @par	修改日志
  * <table>
  * <tr><th>Date			<th>Version		<th>Author		<th>Description
- * <tr><td>2021.05.27	<td>V3.0		<td>LiuChuanXi	<td>创建初始版本
+ * <tr><td>2021.05.27	<td>V3.0		<td>LiuChuanXi	<td>创建初始版本，未增加对lw和sw指令的支持
  * </table>
  */
 
@@ -32,8 +32,10 @@
  * @param	memAddr		output，内存单元地址输出
  * @param	wtData		output，内存单元写数据输出
  * @param	memWr		output，内存单元读写控制信号(read:`DISABLE, write:`ENABLE)
- * @param	memCe		output，内存单元DataMem模块片选控制信号
+ * @param	memCe		output，内存单元DataMem模块片选控制信号，只有进行读/写操作时有效
  * @warning	内存单元的地址宽度和数据宽度都定义为与寄存器长度相同
+ * @warning	当前版本当进行写操作时，写回在下一个始终clk上升沿时写回
+ * @warning	内存单元DataMem模块片选控制信号memCe，只有进行读/写操作时有效
  */
 module MEM(
 	rst, op, regcData, regcAddr, regcWr,
@@ -63,16 +65,16 @@ module MEM(
 	output reg[`REG_LENGTH-1:0] memAddr;		//内存单元地址输出
 	output reg[`REG_LENGTH-1:0] wtData;			//内存单元写数据输出
 	output reg memWr;							//内存单元读写控制信号(read:`DISABLE, write:`ENABLE)
-	output reg memCe;							//内存单元DataMem模块片选信号
+	output reg memCe;							//内存单元DataMem模块片选信号，只有进行读/写操作时有效
 
 
 	/* 模块初始化 */
 	initial begin
 		/* 寄存器部分 */
 		regData <= {`REG_LENGTH{1'b0}};
-		regcAddr <= {`REG_LENGTH{1'b0}};
+		regAddr <= {`REG_LENGTH{1'b0}};
 		regWr <= `DISABLE;
-		/* DataMem模块 */
+		/* 非寄存器模块(RAM或IO) */
 		memAddr <= {`REG_LENGTH{1'b0}};
 		wtData <= {`REG_LENGTH{1'b0}};
 		memWr <= `DISABLE;
@@ -86,9 +88,9 @@ module MEM(
 		if(rst == `ENABLE) begin
 			/* 寄存器部分 */
 			regData <= {`REG_LENGTH{1'b0}};
-			regcAddr <= {`REG_LENGTH{1'b0}};
+			regAddr <= {`REG_LENGTH{1'b0}};
 			regWr <= `DISABLE;
-			/* DataMem模块 */
+			/* 非寄存器模块(RAM或IO) */
 			memAddr <= {`REG_LENGTH{1'b0}};
 			wtData <= {`REG_LENGTH{1'b0}};
 			memWr <= `DISABLE;
@@ -102,6 +104,217 @@ module MEM(
 		/* 复位信号rst无效 */
 		if(rst == `DISABLE) begin
 			/* 根据op进行相应的操作 */
+			case(op)
+			`CMD_ADD: begin
+				/* 寄存器部分 */
+				regData <= regcData;
+				regAddr <= regcAddr;
+				regWr <= regcWr;
+				/* 非寄存器模块(RAM或IO) */
+				memAddr <= memAddr_i;
+				wtData <= memData;
+				memWr <= `DISABLE;
+				memCe <= `DISABLE;
+			end
+			`CMD_SUB: begin
+				/* 寄存器部分 */
+				regData <= regcData;
+				regAddr <= regcAddr;
+				regWr <= regcWr;
+				/* 非寄存器模块(RAM或IO) */
+				memAddr <= memAddr_i;
+				wtData <= memData;
+				memWr <= `DISABLE;
+				memCe <= `DISABLE;
+			end
+			`CMD_AND: begin
+				/* 寄存器部分 */
+				regData <= regcData;
+				regAddr <= regcAddr;
+				regWr <= regcWr;
+				/* 非寄存器模块(RAM或IO) */
+				memAddr <= memAddr_i;
+				wtData <= memData;
+				memWr <= `DISABLE;
+				memCe <= `DISABLE;
+			end
+			`CMD_OR: begin
+				/* 寄存器部分 */
+				regData <= regcData;
+				regAddr <= regcAddr;
+				regWr <= regcWr;
+				/* 非寄存器模块(RAM或IO) */
+				memAddr <= memAddr_i;
+				wtData <= memData;
+				memWr <= `DISABLE;
+				memCe <= `DISABLE;
+			end
+			`CMD_XOR: begin
+				/* 寄存器部分 */
+				regData <= regcData;
+				regAddr <= regcAddr;
+				regWr <= regcWr;
+				/* 非寄存器模块(RAM或IO) */
+				memAddr <= memAddr_i;
+				wtData <= memData;
+				memWr <= `DISABLE;
+				memCe <= `DISABLE;
+			end
+			`CMD_SLL: begin
+				/* 寄存器部分 */
+				regData <= regcData;
+				regAddr <= regcAddr;
+				regWr <= regcWr;
+				/* 非寄存器模块(RAM或IO) */
+				memAddr <= memAddr_i;
+				wtData <= memData;
+				memWr <= `DISABLE;
+				memCe <= `DISABLE;
+			end
+			`CMD_SRL: begin
+				/* 寄存器部分 */
+				regData <= regcData;
+				regAddr <= regcAddr;
+				regWr <= regcWr;
+				/* 非寄存器模块(RAM或IO) */
+				memAddr <= memAddr_i;
+				wtData <= memData;
+				memWr <= `DISABLE;
+				memCe <= `DISABLE;
+			end
+			`CMD_SRA: begin
+				/* 寄存器部分 */
+				regData <= regcData;
+				regAddr <= regcAddr;
+				regWr <= regcWr;
+				/* 非寄存器模块(RAM或IO) */
+				memAddr <= memAddr_i;
+				wtData <= memData;
+				memWr <= `DISABLE;
+				memCe <= `DISABLE;
+			end
+			`CMD_JR: begin
+				/* 寄存器部分 */
+				regData <= regcData;
+				regAddr <= regcAddr;
+				regWr <= regcWr;
+				/* 非寄存器模块(RAM或IO) */
+				memAddr <= memAddr_i;
+				wtData <= memData;
+				memWr <= `DISABLE;
+				memCe <= `DISABLE;
+			end
+			`CMD_ADDI: begin
+				/* 寄存器部分 */
+				regData <= regcData;
+				regAddr <= regcAddr;
+				regWr <= regcWr;
+				/* 非寄存器模块(RAM或IO) */
+				memAddr <= memAddr_i;
+				wtData <= memData;
+				memWr <= `DISABLE;
+				memCe <= `DISABLE;
+			end
+			`CMD_ANDI: begin
+				/* 寄存器部分 */
+				regData <= regcData;
+				regAddr <= regcAddr;
+				regWr <= regcWr;
+				/* 非寄存器模块(RAM或IO) */
+				memAddr <= memAddr_i;
+				wtData <= memData;
+				memWr <= `DISABLE;
+				memCe <= `DISABLE;
+			end
+			`CMD_ORI: begin
+				/* 寄存器部分 */
+				regData <= regcData;
+				regAddr <= regcAddr;
+				regWr <= regcWr;
+				/* 非寄存器模块(RAM或IO) */
+				memAddr <= memAddr_i;
+				wtData <= memData;
+				memWr <= `DISABLE;
+				memCe <= `DISABLE;
+			end
+			`CMD_BEQ: begin
+				/* 寄存器部分 */
+				regData <= regcData;
+				regAddr <= regcAddr;
+				regWr <= regcWr;
+				/* 非寄存器模块(RAM或IO) */
+				memAddr <= memAddr_i;
+				wtData <= memData;
+				memWr <= `DISABLE;
+				memCe <= `DISABLE;
+			end
+			`CMD_BNE: begin
+				/* 寄存器部分 */
+				regData <= regcData;
+				regAddr <= regcAddr;
+				regWr <= regcWr;
+				/* 非寄存器模块(RAM或IO) */
+				memAddr <= memAddr_i;
+				wtData <= memData;
+				memWr <= `DISABLE;
+				memCe <= `DISABLE;
+			end
+			`CMD_XORI: begin
+				/* 寄存器部分 */
+				regData <= regcData;
+				regAddr <= regcAddr;
+				regWr <= regcWr;
+				/* 非寄存器模块(RAM或IO) */
+				memAddr <= memAddr_i;
+				wtData <= memData;
+				memWr <= `DISABLE;
+				memCe <= `DISABLE;
+			end
+			`CMD_LUI: begin
+				/* 寄存器部分 */
+				regData <= regcData;
+				regAddr <= regcAddr;
+				regWr <= regcWr;
+				/* 非寄存器模块(RAM或IO) */
+				memAddr <= memAddr_i;
+				wtData <= memData;
+				memWr <= `DISABLE;
+				memCe <= `DISABLE;
+			end
+			`CMD_J: begin
+				/* 寄存器部分 */
+				regData <= regcData;
+				regAddr <= regcAddr;
+				regWr <= regcWr;
+				/* 非寄存器模块(RAM或IO) */
+				memAddr <= memAddr_i;
+				wtData <= memData;
+				memWr <= `DISABLE;
+				memCe <= `DISABLE;
+			end
+			`CMD_JAL: begin
+				/* 寄存器部分 */
+				regData <= regcData;
+				regAddr <= regcAddr;
+				regWr <= regcWr;
+				/* 非寄存器模块(RAM或IO) */
+				memAddr <= memAddr_i;
+				wtData <= memData;
+				memWr <= `DISABLE;
+				memCe <= `DISABLE;
+			end
+			default: begin
+				/* 寄存器部分 */
+				regData <= {`REG_LENGTH{1'b0}};
+				regAddr <= {`REG_LENGTH{1'b0}};
+				regWr <= `DISABLE;
+				/* 非寄存器模块(RAM或IO) */
+				memAddr <= {`REG_LENGTH{1'b0}};
+				wtData <= {`REG_LENGTH{1'b0}};
+				memWr <= `DISABLE;
+				memCe <= `DISABLE;
+			end
+			endcase
 		end
 	end
 
