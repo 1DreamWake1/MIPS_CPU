@@ -40,6 +40,9 @@
 	3. 指令测试通过
 	4. **version2**完成
 # Version 3
+* 2021.05.27
+	1. 开始**version3**
+	2. 添加*RAM*模块*DataMem*(`DataMem.vh`，`DataMem.v`)
 
 
 # Version 4
