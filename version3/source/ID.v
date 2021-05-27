@@ -1,8 +1,8 @@
 /**
  * @file	ID.vh
  * @author	LiuChuanXi
- * @date	2021.05.26
- * @version	V2.2
+ * @date	2021.05.27
+ * @version	V3.0
  * @brief	MIPS_CPU指令译码ID模块
  * @par	修改日志
  * <table>
@@ -14,6 +14,7 @@
  * <tr><td>2021.05.26	<td>V2.0		<td>LiuChuanXi	<td>开始version2
  * <tr><td>2021.05.26	<td>V2.1		<td>LiuChuanXi	<td>增加对J型指令的支持
  * <tr><td>2021.05.26	<td>V2.2		<td>LiuChuanXi	<td>J型指令完成，version2完成
+ * <tr><td>2021.05.27	<td>V3.0		<td>LiuChuanXi	<td>开始version3,增加对lw和sw指令的支持
  * </table>
  */
 
@@ -562,6 +563,81 @@ module ID(
 			/* 寄存器a和b数据输出 */
 			regaData <= regaData_i;
 			regbData <= {{16{1'b0}}, inst[15:0]};
+			/* 跳转指令功能 */
+			jAddr <= `PC_NULL;
+			jCe <= `DISABLE;
+		end
+	end
+
+	/**
+	 * instructions		LW
+	 * type				I(load)
+	 * detail			rt <- memory[rs + sign_extend(offset)]
+	 * inst[31:26]	==	6'b100011
+	 * inst[25:21]	==	rs
+	 * inst[20:16]	==	rt
+	 * inst[15:0]	==	offset
+	 */
+	always@(*) begin
+		/* 复位信号rst无效 */
+		if((rst == `DISABLE) && (inst[31:26] == 6'b100011)) begin
+			/* op传递CMD操作码 */
+			op <= `CMD_LW;
+			/* a读使能信号，与地址 */
+			regaRd <= `ENABLE;
+			regaAddr <= inst[25:21];
+			/* b读使能信号，与地址 */
+			regbRd <= `DISABLE;
+			regbAddr <= {`REG_ADDR_LEN{1'b0}};
+			/* c写使能信号，与地址 */
+			regcWr <= `ENABLE;
+			regcAddr <= inst[20:16];
+			/**
+			 * 寄存器a和b数据输出
+			 * 注意：这里直接将要读取的RAM地址最低两位置成2'b00
+			 * regaData传递的是要load的RAM的地址
+			 * regcAddr为写回到的寄存器的地址(号)
+			 */
+			regaData <= ((regaData_i + {{16{inst[15]}}, inst[15:0]}) | ({`REG_LENGTH{1'b1}}<<2));
+			regbData <= {`REG_LENGTH{1'b0}};
+			/* 跳转指令功能 */
+			jAddr <= `PC_NULL;
+			jCe <= `DISABLE;
+		end
+	end
+
+	/**
+	 * instructions		SW
+	 * type				I(store)
+	 * detail			memory[rs + sign_extend(offset)] <- rt
+	 * inst[31:26]	==	6'b101011
+	 * inst[25:21]	==	rs
+	 * inst[20:16]	==	rt
+	 * inst[15:0]	==	offset
+	 */
+	always@(*) begin
+		/* 复位信号rst无效 */
+		if((rst == `DISABLE) && (inst[31:26] == 6'b101011)) begin
+			/* op传递CMD操作码 */
+			op <= `CMD_SW;
+			/* a读使能信号，与地址 */
+			regaRd <= `ENABLE;
+			regaAddr <= inst[25:21];
+			/* b读使能信号，与地址 */
+			regbRd <= `ENABLE;
+			regbAddr <= inst[20:16];
+			/* c写使能信号，与地址 */
+			regcWr <= `DISABLE;
+			regcAddr <= {`REG_ADDR_LEN{1'b0}};
+			/**
+			 * 寄存器a和b数据输出
+			 * 注意：这里直接将要写入的RAM地址最低两位置成2'b00
+			 * regaData传递的是要store的RAM的地址
+			 * regbData传递的是要写入的值
+			 * regcAddr为写回到的寄存器的地址(号)
+			 */
+			regaData <= ((regaData_i + {{16{inst[15]}}, inst[15:0]}) | ({`REG_LENGTH{1'b1}}<<2));
+			regbData <= regbData_i;
 			/* 跳转指令功能 */
 			jAddr <= `PC_NULL;
 			jCe <= `DISABLE;

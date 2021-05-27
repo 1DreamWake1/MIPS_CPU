@@ -249,6 +249,28 @@ module EX(
 					memAddr_i <= {`REG_LENGTH{1'b0}};
 					memData_i <= {`REG_LENGTH{1'b0}};
 				end
+				`CMD_LW: begin
+			 		/* 寄存器部分 */
+					regcData <= {`REG_LENGTH{1'b0}};
+					regcWr <= regcWr_i;
+					regcAddr <= regcAddr_i;
+					/* 非寄存器部分(RAM或IO) */
+					op <= op_i;
+					/* 注意：这里不检查地址最低两位是否是2'b00 */
+					memAddr_i <= regaData;
+					memData_i <= {`REG_LENGTH{1'b0}};
+				end
+				`CMD_SW: begin
+			 		/* 寄存器部分 */
+					regcData <= {`REG_LENGTH{1'b0}};
+					regcWr <= regcWr_i;
+					regcAddr <= regcAddr_i;
+					/* 非寄存器部分(RAM或IO) */
+					op <= op_i;
+					/* 注意：这里不检查地址最低两位是否是2'b00 */
+					memAddr_i <= regaData;
+					memData_i <= regbData;
+				end
 				`CMD_LUI: begin
 			 		/* 寄存器部分 */
 					regcData <= regaData << 16;

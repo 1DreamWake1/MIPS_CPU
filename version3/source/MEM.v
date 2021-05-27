@@ -2,12 +2,13 @@
  * @file	MEM.v
  * @author	LiuChuanXi
  * @date	2021.05.27
- * @version	V3.0
+ * @version	V3.1
  * @brief	内存管理模块，用于区分操作寄存器堆还是内存模块
  * @par	修改日志
  * <table>
  * <tr><th>Date			<th>Version		<th>Author		<th>Description
  * <tr><td>2021.05.27	<td>V3.0		<td>LiuChuanXi	<td>创建初始版本，未增加对lw和sw指令的支持
+ * <tr><td>2021.05.27	<td>V3.1		<td>LiuChuanXi	<td>增加对lw和sw指令的支持
  * </table>
  */
 
@@ -269,6 +270,28 @@ module MEM(
 				wtData <= memData_i;
 				memWr <= `DISABLE;
 				memCe <= `DISABLE;
+			end
+			`CMD_LW: begin
+				/* 寄存器部分 */
+				regData <= rdData;
+				regAddr <= regcAddr;
+				regWr <= regcWr;
+				/* 非寄存器模块(RAM或IO) */
+				memAddr <= memAddr_i;
+				wtData <= memData_i;
+				memWr <= `DISABLE;
+				memCe <= `ENABLE;
+			end
+			`CMD_SW: begin
+				/* 寄存器部分 */
+				regData <= regcData;
+				regAddr <= regcAddr;
+				regWr <= regcWr;
+				/* 非寄存器模块(RAM或IO) */
+				memAddr <= memAddr_i;
+				wtData <= memData_i;
+				memWr <= `ENABLE;
+				memCe <= `ENABLE;
 			end
 			`CMD_LUI: begin
 				/* 寄存器部分 */
