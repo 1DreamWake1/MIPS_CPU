@@ -1,8 +1,8 @@
 /**
  * @file	EX.v
  * @author	LiuChuanXi
- * @date	2021.05.26
- * @version	V2.2
+ * @date	2021.05.27
+ * @version	V3.0
  * @brief	MIPS_CPU执行模块EX
  * @par	修改日志
  * <table>
@@ -12,6 +12,7 @@
  * <tr><td>2021.05.26	<td>V2.0		<td>LiuChuanXi	<td>开始Version2
  * <tr><td>2021.05.26	<td>V2.1		<td>LiuChuanXi	<td>增加对J型指令的支持
  * <tr><td>2021.05.26	<td>V2.2		<td>LiuChuanXi	<td>J型指令完成，version2完成
+ * <tr><td>2021.05.26	<td>V3.0		<td>LiuChuanXi	<td>version3开始，增加与MEM间的三根线
  * </table>
  */
 
@@ -23,7 +24,7 @@
  * @author	LiuChuanXi
  * @brief	EX(执行)模块
  * @param	rst			input，复位信号，高有效
- * @param	op			input，指令译码后对应的指令编码(CMD_XXX)
+ * @param	op_i		input，指令译码后对应的指令编码(CMD_XXX)
  * @param	regaData	input，寄存器A数据输入
  * @param	regbData	input，寄存器B数据输入
  * @param	regcWr_i	input，目的寄存器c写使能信号
@@ -31,209 +32,261 @@
  * @param	regcData	output，目的寄存器c数据输出
  * @param	regcAddr	output，目的寄存器c地址输出
  * @param	regcWr		output，目的寄存器c写控制信号
+ * @param	op			output，指令编号输出给内存管理模块MEM
+ * @param	memAddr		output，传递给MEM的地址输出
+ * @param	memData		output，传递给MEM的数据输出
+ * @warning 对MEM模块输出的数据和地址宽度都为寄存器长度(32bit)
  */
 module EX(
-	rst, op, regaData, regbData, regcWr_i, regcAddr_i,
-	regcData, regcAddr, regcWr
+	rst,
+	op_i, regaData, regbData, regcWr_i, regcAddr_i,
+	regcData, regcAddr, regcWr,
+	op, memAddr, memData
 );
 
 	/* input */
 	input wire rst;								//复位信号
-	input wire[`OP_LENGTH-1:0] op;				//指令译码后对应的指令编码(CMD_XXX)
+	input wire[`OP_LENGTH-1:0] op_i;				//指令译码后对应的指令编码(CMD_XXX)
 	input wire[`REG_LENGTH-1:0] regaData;		//寄存器A数据输入
 	input wire[`REG_LENGTH-1:0] regbData;		//寄存器B数据输入
 	input wire regcWr_i;						//目的寄存器c写使能信号
 	input wire[`REG_ADDR_LEN-1:0] regcAddr_i;	//目的寄存器c对应地址(寄存器编号)
 
-	/* output */
+	/* output 1 */
 	output reg[`REG_LENGTH-1:0] regcData;		//目的寄存器c数据输出
 	output reg[`REG_ADDR_LEN-1:0] regcAddr;		//目的寄存器c地址输出
 	output reg regcWr;							//目的寄存器c写控制信号
 
+	/* output 2 */
+	output reg[`OP_LENGTH-1:0] op;				//指令编号输出给内存管理模块MEM
+	output reg[`REG_LENGTH-1:0] memAddr;		//传递给MEM的地址输出
+	output reg[`REG_LENGTH-1:0] memData;		//传递给MEM的数据输出
+
 
 	/* 模块初始化 */
 	initial begin
-		/* 目标寄存器c输出数据为0 */
-		regcData = {`REG_LENGTH{1'b0}};
-		/* 目标寄存器c地址对应0号寄存器 */
-		regcAddr = {`REG_ADDR_LEN{1'b0}};
-		/* 目标寄存器写不使能 */
-		regcWr = `DISABLE;
+		/* 寄存器部分 */
+		regcData <= {`REG_LENGTH{1'b0}};
+		regcAddr <= {`REG_ADDR_LEN{1'b0}};
+		regcWr <= `DISABLE;
+		/* 非寄存器部分(RAM或IO) */
+		op <= op_i;
+		memAddr <= {`REG_LENGTH{1'b0}};
+		memData <= {`REG_LENGTH{1'b0}};
 	end
 
-
-	/* 功能 */
 
 	/* 复位信号rst */
 	always@(rst) begin
 		/* 复位信号rst有效 */
 		if(rst == `ENABLE) begin
-			/* 目标寄存器c输出数据为0 */
-			regcData = {`REG_LENGTH{1'b0}};
-			/* 目标寄存器c地址对应0号寄存器 */
-			regcAddr = {`REG_ADDR_LEN{1'b0}};
-			/* 目标寄存器写不使能 */
-			regcWr = `DISABLE;
+			/* 寄存器部分 */
+			regcData <= {`REG_LENGTH{1'b0}};
+			regcAddr <= {`REG_ADDR_LEN{1'b0}};
+			regcWr <= `DISABLE;
+			/* 非寄存器部分(RAM或IO) */
+			op <= op_i;
+			memAddr <= {`REG_LENGTH{1'b0}};
+			memData <= {`REG_LENGTH{1'b0}};
 		end
 	end
+
 
 	/* 执行指令 */
 	always@(*) begin
 		/* 复位信号rst无效 */
 		if(rst == `DISABLE) begin
 			/* 根据op进行相应运算 */
-			case(op)
+			case(op_i)
 				`CMD_ADD: begin
-					/* 运算与写回 */
+			 		/* 寄存器部分 */
 					regcData <= regaData + regbData;
-					/* 目的寄存器写使能信号 */
 					regcWr <= regcWr_i;
-					/* 目的寄存器地址 */
 					regcAddr <= regcAddr_i;
+					/* 非寄存器部分(RAM或IO) */
+					op <= op_i;
+					memAddr <= {`REG_LENGTH{1'b0}};
+					memData <= {`REG_LENGTH{1'b0}};
 				end
 				`CMD_SUB: begin
-					/* 运算与写回 */
+			 		/* 寄存器部分 */
 					regcData <= regaData - regbData;
-					/* 目的寄存器写使能信号 */
 					regcWr <= regcWr_i;
-					/* 目的寄存器地址 */
 					regcAddr <= regcAddr_i;
+					/* 非寄存器部分(RAM或IO) */
+					op <= op_i;
+					memAddr <= {`REG_LENGTH{1'b0}};
+					memData <= {`REG_LENGTH{1'b0}};
 				end
 				`CMD_AND: begin
-					/* 运算与写回 */
+			 		/* 寄存器部分 */
 					regcData <= regaData & regbData;
-					/* 目的寄存器写使能信号 */
 					regcWr <= regcWr_i;
-					/* 目的寄存器地址 */
 					regcAddr <= regcAddr_i;
+					/* 非寄存器部分(RAM或IO) */
+					op <= op_i;
+					memAddr <= {`REG_LENGTH{1'b0}};
+					memData <= {`REG_LENGTH{1'b0}};
 				end
 				`CMD_OR: begin
-					/* 运算与写回 */
+			 		/* 寄存器部分 */
 					regcData <= regaData | regbData;
-					/* 目的寄存器写使能信号 */
 					regcWr <= regcWr_i;
-					/* 目的寄存器地址 */
 					regcAddr <= regcAddr_i;
+					/* 非寄存器部分(RAM或IO) */
+					op <= op_i;
+					memAddr <= {`REG_LENGTH{1'b0}};
+					memData <= {`REG_LENGTH{1'b0}};
 				end
 				`CMD_XOR: begin
-					/* 运算与写回 */
+			 		/* 寄存器部分 */
 					regcData <= regaData ^ regbData;
-					/* 目的寄存器写使能信号 */
 					regcWr <= regcWr_i;
-					/* 目的寄存器地址 */
 					regcAddr <= regcAddr_i;
+					/* 非寄存器部分(RAM或IO) */
+					op <= op_i;
+					memAddr <= {`REG_LENGTH{1'b0}};
+					memData <= {`REG_LENGTH{1'b0}};
 				end
 				`CMD_SLL: begin
-					/* 运算与写回 */
+			 		/* 寄存器部分 */
 					regcData <= regaData << regbData;
-					/* 目的寄存器写使能信号 */
 					regcWr <= regcWr_i;
-					/* 目的寄存器地址 */
 					regcAddr <= regcAddr_i;
+					/* 非寄存器部分(RAM或IO) */
+					op <= op_i;
+					memAddr <= {`REG_LENGTH{1'b0}};
+					memData <= {`REG_LENGTH{1'b0}};
 				end
 				`CMD_SRL: begin
-					/* 运算与写回 */
+			 		/* 寄存器部分 */
 					regcData <= regaData >> regbData;
-					/* 目的寄存器写使能信号 */
 					regcWr <= regcWr_i;
-					/* 目的寄存器地址 */
 					regcAddr <= regcAddr_i;
+					/* 非寄存器部分(RAM或IO) */
+					op <= op_i;
+					memAddr <= {`REG_LENGTH{1'b0}};
+					memData <= {`REG_LENGTH{1'b0}};
 				end
 				`CMD_SRA: begin
-					/* 运算与写回 */
+			 		/* 寄存器部分 */
 					regcData <= (regaData >> regbData) | ({`REG_LENGTH{regaData[`REG_LENGTH-1]}} << (`REG_LENGTH - regbData));
-					/* 目的寄存器写使能信号 */
 					regcWr <= regcWr_i;
-					/* 目的寄存器地址 */
 					regcAddr <= regcAddr_i;
+					/* 非寄存器部分(RAM或IO) */
+					op <= op_i;
+					memAddr <= {`REG_LENGTH{1'b0}};
+					memData <= {`REG_LENGTH{1'b0}};
 				end
 				`CMD_JR: begin
-					/* 运算与写回 */
+			 		/* 寄存器部分 */
 					regcData <= {`REG_LENGTH{1'b0}};
-					/* 目的寄存器写使能信号 */
 					regcWr <= regcWr_i;
-					/* 目的寄存器地址 */
 					regcAddr <= regcAddr_i;
+					/* 非寄存器部分(RAM或IO) */
+					op <= op_i;
+					memAddr <= {`REG_LENGTH{1'b0}};
+					memData <= {`REG_LENGTH{1'b0}};
 				end
 				`CMD_ADDI: begin
-					/* 运算与写回 */
+			 		/* 寄存器部分 */
 					regcData <= regaData + regbData;
-					/* 目的寄存器写使能信号 */
 					regcWr <= regcWr_i;
-					/* 目的寄存器地址 */
 					regcAddr <= regcAddr_i;
+					/* 非寄存器部分(RAM或IO) */
+					op <= op_i;
+					memAddr <= {`REG_LENGTH{1'b0}};
+					memData <= {`REG_LENGTH{1'b0}};
 				end
 				`CMD_ANDI: begin
-					/* 运算与写回 */
+			 		/* 寄存器部分 */
 					regcData <= regaData & regbData;
-					/* 目的寄存器写使能信号 */
 					regcWr <= regcWr_i;
-					/* 目的寄存器地址 */
 					regcAddr <= regcAddr_i;
+					/* 非寄存器部分(RAM或IO) */
+					op <= op_i;
+					memAddr <= {`REG_LENGTH{1'b0}};
+					memData <= {`REG_LENGTH{1'b0}};
 				end
 				`CMD_ORI: begin
-					/* 运算与写回 */
+			 		/* 寄存器部分 */
 					regcData <= regaData | regbData;
-					/* 目的寄存器写使能信号 */
 					regcWr <= regcWr_i;
-					/* 目的寄存器地址 */
 					regcAddr <= regcAddr_i;
+					/* 非寄存器部分(RAM或IO) */
+					op <= op_i;
+					memAddr <= {`REG_LENGTH{1'b0}};
+					memData <= {`REG_LENGTH{1'b0}};
 				end
 				`CMD_BEQ: begin
-					/* 运算与写回 */
+			 		/* 寄存器部分 */
 					regcData <= {`REG_LENGTH{1'b0}};
-					/* 目的寄存器写使能信号 */
 					regcWr <= regcWr_i;
-					/* 目的寄存器地址 */
 					regcAddr <= regcAddr_i;
+					/* 非寄存器部分(RAM或IO) */
+					op <= op_i;
+					memAddr <= {`REG_LENGTH{1'b0}};
+					memData <= {`REG_LENGTH{1'b0}};
 				end
 				`CMD_BNE: begin
-					/* 运算与写回 */
+			 		/* 寄存器部分 */
 					regcData <= {`REG_LENGTH{1'b0}};
-					/* 目的寄存器写使能信号 */
 					regcWr <= regcWr_i;
-					/* 目的寄存器地址 */
 					regcAddr <= regcAddr_i;
+					/* 非寄存器部分(RAM或IO) */
+					op <= op_i;
+					memAddr <= {`REG_LENGTH{1'b0}};
+					memData <= {`REG_LENGTH{1'b0}};
 				end
 				`CMD_XORI: begin
-					/* 运算与写回 */
+			 		/* 寄存器部分 */
 					regcData <= regaData ^ regbData;
-					/* 目的寄存器写使能信号 */
 					regcWr <= regcWr_i;
-					/* 目的寄存器地址 */
 					regcAddr <= regcAddr_i;
+					/* 非寄存器部分(RAM或IO) */
+					op <= op_i;
+					memAddr <= {`REG_LENGTH{1'b0}};
+					memData <= {`REG_LENGTH{1'b0}};
 				end
 				`CMD_LUI: begin
-					/* 运算与写回 */
+			 		/* 寄存器部分 */
 					regcData <= regaData << 16;
-					/* 目的寄存器写使能信号 */
 					regcWr <= regcWr_i;
-					/* 目的寄存器地址 */
 					regcAddr <= regcAddr_i;
+					/* 非寄存器部分(RAM或IO) */
+					op <= op_i;
+					memAddr <= {`REG_LENGTH{1'b0}};
+					memData <= {`REG_LENGTH{1'b0}};
 				end
 				`CMD_J: begin
-					/* 运算与写回 */
+			 		/* 寄存器部分 */
 					regcData <= {`REG_LENGTH{1'b0}};
-					/* 目的寄存器写使能信号 */
 					regcWr <= regcWr_i;
-					/* 目的寄存器地址 */
 					regcAddr <= regcAddr_i;
+					/* 非寄存器部分(RAM或IO) */
+					op <= op_i;
+					memAddr <= {`REG_LENGTH{1'b0}};
+					memData <= {`REG_LENGTH{1'b0}};
 				end
 				`CMD_JAL: begin
-					/* 运算与写回 */
+			 		/* 寄存器部分 */
 					regcData <= regaData;
-					/* 目的寄存器写使能信号 */
 					regcWr <= regcWr_i;
-					/* 目的寄存器地址 */
 					regcAddr <= regcAddr_i;
+					/* 非寄存器部分(RAM或IO) */
+					op <= op_i;
+					memAddr <= {`REG_LENGTH{1'b0}};
+					memData <= {`REG_LENGTH{1'b0}};
 				end
 				default: begin
 					/* 输出全零 */
 					regcData <= {`REG_LENGTH{1'b0}};
-					/* 目的寄存器写使能信号 */
 					regcWr <= `DISABLE;
-					/* 目的寄存器地址 */
 					regcAddr <= {`REG_ADDR_LEN{1'b0}};
+					/* 非寄存器部分(RAM或IO) */
+					op <= op_i;
+					memAddr <= {`REG_LENGTH{1'b0}};
+					memData <= {`REG_LENGTH{1'b0}};
 				end
 			endcase
 		end
