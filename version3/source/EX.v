@@ -2,7 +2,7 @@
  * @file	EX.v
  * @author	LiuChuanXi
  * @date	2021.05.27
- * @version	V3.0
+ * @version	V3.1
  * @brief	MIPS_CPU执行模块EX
  * @par	修改日志
  * <table>
@@ -13,6 +13,7 @@
  * <tr><td>2021.05.26	<td>V2.1		<td>LiuChuanXi	<td>增加对J型指令的支持
  * <tr><td>2021.05.26	<td>V2.2		<td>LiuChuanXi	<td>J型指令完成，version2完成
  * <tr><td>2021.05.26	<td>V3.0		<td>LiuChuanXi	<td>version3开始，增加与MEM间的三根线
+ * <tr><td>2021.05.26	<td>V3.1		<td>LiuChuanXi	<td>修改与MEM模块端口的名称加上"_i"
  * </table>
  */
 
@@ -33,20 +34,20 @@
  * @param	regcAddr	output，目的寄存器c地址输出
  * @param	regcWr		output，目的寄存器c写控制信号
  * @param	op			output，指令编号输出给内存管理模块MEM
- * @param	memAddr		output，传递给MEM的地址输出
- * @param	memData		output，传递给MEM的数据输出
+ * @param	memAddr_i	output，传递给MEM的地址输出
+ * @param	memData_i	output，传递给MEM的数据输出
  * @warning 对MEM模块输出的数据和地址宽度都为寄存器长度(32bit)
  */
 module EX(
 	rst,
 	op_i, regaData, regbData, regcWr_i, regcAddr_i,
 	regcData, regcAddr, regcWr,
-	op, memAddr, memData
+	op, memAddr_i, memData_i
 );
 
 	/* input */
 	input wire rst;								//复位信号
-	input wire[`OP_LENGTH-1:0] op_i;				//指令译码后对应的指令编码(CMD_XXX)
+	input wire[`OP_LENGTH-1:0] op_i;			//指令译码后对应的指令编码(CMD_XXX)
 	input wire[`REG_LENGTH-1:0] regaData;		//寄存器A数据输入
 	input wire[`REG_LENGTH-1:0] regbData;		//寄存器B数据输入
 	input wire regcWr_i;						//目的寄存器c写使能信号
@@ -59,8 +60,8 @@ module EX(
 
 	/* output 2 */
 	output reg[`OP_LENGTH-1:0] op;				//指令编号输出给内存管理模块MEM
-	output reg[`REG_LENGTH-1:0] memAddr;		//传递给MEM的地址输出
-	output reg[`REG_LENGTH-1:0] memData;		//传递给MEM的数据输出
+	output reg[`REG_LENGTH-1:0] memAddr_i;		//传递给MEM的地址输出
+	output reg[`REG_LENGTH-1:0] memData_i;		//传递给MEM的数据输出
 
 
 	/* 模块初始化 */
@@ -71,8 +72,8 @@ module EX(
 		regcWr <= `DISABLE;
 		/* 非寄存器部分(RAM或IO) */
 		op <= op_i;
-		memAddr <= {`REG_LENGTH{1'b0}};
-		memData <= {`REG_LENGTH{1'b0}};
+		memAddr_i <= {`REG_LENGTH{1'b0}};
+		memData_i <= {`REG_LENGTH{1'b0}};
 	end
 
 
@@ -86,8 +87,8 @@ module EX(
 			regcWr <= `DISABLE;
 			/* 非寄存器部分(RAM或IO) */
 			op <= op_i;
-			memAddr <= {`REG_LENGTH{1'b0}};
-			memData <= {`REG_LENGTH{1'b0}};
+			memAddr_i <= {`REG_LENGTH{1'b0}};
+			memData_i <= {`REG_LENGTH{1'b0}};
 		end
 	end
 
@@ -105,8 +106,8 @@ module EX(
 					regcAddr <= regcAddr_i;
 					/* 非寄存器部分(RAM或IO) */
 					op <= op_i;
-					memAddr <= {`REG_LENGTH{1'b0}};
-					memData <= {`REG_LENGTH{1'b0}};
+					memAddr_i <= {`REG_LENGTH{1'b0}};
+					memData_i <= {`REG_LENGTH{1'b0}};
 				end
 				`CMD_SUB: begin
 			 		/* 寄存器部分 */
@@ -115,8 +116,8 @@ module EX(
 					regcAddr <= regcAddr_i;
 					/* 非寄存器部分(RAM或IO) */
 					op <= op_i;
-					memAddr <= {`REG_LENGTH{1'b0}};
-					memData <= {`REG_LENGTH{1'b0}};
+					memAddr_i <= {`REG_LENGTH{1'b0}};
+					memData_i <= {`REG_LENGTH{1'b0}};
 				end
 				`CMD_AND: begin
 			 		/* 寄存器部分 */
@@ -125,8 +126,8 @@ module EX(
 					regcAddr <= regcAddr_i;
 					/* 非寄存器部分(RAM或IO) */
 					op <= op_i;
-					memAddr <= {`REG_LENGTH{1'b0}};
-					memData <= {`REG_LENGTH{1'b0}};
+					memAddr_i <= {`REG_LENGTH{1'b0}};
+					memData_i <= {`REG_LENGTH{1'b0}};
 				end
 				`CMD_OR: begin
 			 		/* 寄存器部分 */
@@ -135,8 +136,8 @@ module EX(
 					regcAddr <= regcAddr_i;
 					/* 非寄存器部分(RAM或IO) */
 					op <= op_i;
-					memAddr <= {`REG_LENGTH{1'b0}};
-					memData <= {`REG_LENGTH{1'b0}};
+					memAddr_i <= {`REG_LENGTH{1'b0}};
+					memData_i <= {`REG_LENGTH{1'b0}};
 				end
 				`CMD_XOR: begin
 			 		/* 寄存器部分 */
@@ -145,8 +146,8 @@ module EX(
 					regcAddr <= regcAddr_i;
 					/* 非寄存器部分(RAM或IO) */
 					op <= op_i;
-					memAddr <= {`REG_LENGTH{1'b0}};
-					memData <= {`REG_LENGTH{1'b0}};
+					memAddr_i <= {`REG_LENGTH{1'b0}};
+					memData_i <= {`REG_LENGTH{1'b0}};
 				end
 				`CMD_SLL: begin
 			 		/* 寄存器部分 */
@@ -155,8 +156,8 @@ module EX(
 					regcAddr <= regcAddr_i;
 					/* 非寄存器部分(RAM或IO) */
 					op <= op_i;
-					memAddr <= {`REG_LENGTH{1'b0}};
-					memData <= {`REG_LENGTH{1'b0}};
+					memAddr_i <= {`REG_LENGTH{1'b0}};
+					memData_i <= {`REG_LENGTH{1'b0}};
 				end
 				`CMD_SRL: begin
 			 		/* 寄存器部分 */
@@ -165,8 +166,8 @@ module EX(
 					regcAddr <= regcAddr_i;
 					/* 非寄存器部分(RAM或IO) */
 					op <= op_i;
-					memAddr <= {`REG_LENGTH{1'b0}};
-					memData <= {`REG_LENGTH{1'b0}};
+					memAddr_i <= {`REG_LENGTH{1'b0}};
+					memData_i <= {`REG_LENGTH{1'b0}};
 				end
 				`CMD_SRA: begin
 			 		/* 寄存器部分 */
@@ -175,8 +176,8 @@ module EX(
 					regcAddr <= regcAddr_i;
 					/* 非寄存器部分(RAM或IO) */
 					op <= op_i;
-					memAddr <= {`REG_LENGTH{1'b0}};
-					memData <= {`REG_LENGTH{1'b0}};
+					memAddr_i <= {`REG_LENGTH{1'b0}};
+					memData_i <= {`REG_LENGTH{1'b0}};
 				end
 				`CMD_JR: begin
 			 		/* 寄存器部分 */
@@ -185,8 +186,8 @@ module EX(
 					regcAddr <= regcAddr_i;
 					/* 非寄存器部分(RAM或IO) */
 					op <= op_i;
-					memAddr <= {`REG_LENGTH{1'b0}};
-					memData <= {`REG_LENGTH{1'b0}};
+					memAddr_i <= {`REG_LENGTH{1'b0}};
+					memData_i <= {`REG_LENGTH{1'b0}};
 				end
 				`CMD_ADDI: begin
 			 		/* 寄存器部分 */
@@ -195,8 +196,8 @@ module EX(
 					regcAddr <= regcAddr_i;
 					/* 非寄存器部分(RAM或IO) */
 					op <= op_i;
-					memAddr <= {`REG_LENGTH{1'b0}};
-					memData <= {`REG_LENGTH{1'b0}};
+					memAddr_i <= {`REG_LENGTH{1'b0}};
+					memData_i <= {`REG_LENGTH{1'b0}};
 				end
 				`CMD_ANDI: begin
 			 		/* 寄存器部分 */
@@ -205,8 +206,8 @@ module EX(
 					regcAddr <= regcAddr_i;
 					/* 非寄存器部分(RAM或IO) */
 					op <= op_i;
-					memAddr <= {`REG_LENGTH{1'b0}};
-					memData <= {`REG_LENGTH{1'b0}};
+					memAddr_i <= {`REG_LENGTH{1'b0}};
+					memData_i <= {`REG_LENGTH{1'b0}};
 				end
 				`CMD_ORI: begin
 			 		/* 寄存器部分 */
@@ -215,8 +216,8 @@ module EX(
 					regcAddr <= regcAddr_i;
 					/* 非寄存器部分(RAM或IO) */
 					op <= op_i;
-					memAddr <= {`REG_LENGTH{1'b0}};
-					memData <= {`REG_LENGTH{1'b0}};
+					memAddr_i <= {`REG_LENGTH{1'b0}};
+					memData_i <= {`REG_LENGTH{1'b0}};
 				end
 				`CMD_BEQ: begin
 			 		/* 寄存器部分 */
@@ -225,8 +226,8 @@ module EX(
 					regcAddr <= regcAddr_i;
 					/* 非寄存器部分(RAM或IO) */
 					op <= op_i;
-					memAddr <= {`REG_LENGTH{1'b0}};
-					memData <= {`REG_LENGTH{1'b0}};
+					memAddr_i <= {`REG_LENGTH{1'b0}};
+					memData_i <= {`REG_LENGTH{1'b0}};
 				end
 				`CMD_BNE: begin
 			 		/* 寄存器部分 */
@@ -235,8 +236,8 @@ module EX(
 					regcAddr <= regcAddr_i;
 					/* 非寄存器部分(RAM或IO) */
 					op <= op_i;
-					memAddr <= {`REG_LENGTH{1'b0}};
-					memData <= {`REG_LENGTH{1'b0}};
+					memAddr_i <= {`REG_LENGTH{1'b0}};
+					memData_i <= {`REG_LENGTH{1'b0}};
 				end
 				`CMD_XORI: begin
 			 		/* 寄存器部分 */
@@ -245,8 +246,8 @@ module EX(
 					regcAddr <= regcAddr_i;
 					/* 非寄存器部分(RAM或IO) */
 					op <= op_i;
-					memAddr <= {`REG_LENGTH{1'b0}};
-					memData <= {`REG_LENGTH{1'b0}};
+					memAddr_i <= {`REG_LENGTH{1'b0}};
+					memData_i <= {`REG_LENGTH{1'b0}};
 				end
 				`CMD_LUI: begin
 			 		/* 寄存器部分 */
@@ -255,8 +256,8 @@ module EX(
 					regcAddr <= regcAddr_i;
 					/* 非寄存器部分(RAM或IO) */
 					op <= op_i;
-					memAddr <= {`REG_LENGTH{1'b0}};
-					memData <= {`REG_LENGTH{1'b0}};
+					memAddr_i <= {`REG_LENGTH{1'b0}};
+					memData_i <= {`REG_LENGTH{1'b0}};
 				end
 				`CMD_J: begin
 			 		/* 寄存器部分 */
@@ -265,8 +266,8 @@ module EX(
 					regcAddr <= regcAddr_i;
 					/* 非寄存器部分(RAM或IO) */
 					op <= op_i;
-					memAddr <= {`REG_LENGTH{1'b0}};
-					memData <= {`REG_LENGTH{1'b0}};
+					memAddr_i <= {`REG_LENGTH{1'b0}};
+					memData_i <= {`REG_LENGTH{1'b0}};
 				end
 				`CMD_JAL: begin
 			 		/* 寄存器部分 */
@@ -275,8 +276,8 @@ module EX(
 					regcAddr <= regcAddr_i;
 					/* 非寄存器部分(RAM或IO) */
 					op <= op_i;
-					memAddr <= {`REG_LENGTH{1'b0}};
-					memData <= {`REG_LENGTH{1'b0}};
+					memAddr_i <= {`REG_LENGTH{1'b0}};
+					memData_i <= {`REG_LENGTH{1'b0}};
 				end
 				default: begin
 					/* 输出全零 */
@@ -285,8 +286,8 @@ module EX(
 					regcAddr <= {`REG_ADDR_LEN{1'b0}};
 					/* 非寄存器部分(RAM或IO) */
 					op <= op_i;
-					memAddr <= {`REG_LENGTH{1'b0}};
-					memData <= {`REG_LENGTH{1'b0}};
+					memAddr_i <= {`REG_LENGTH{1'b0}};
+					memData_i <= {`REG_LENGTH{1'b0}};
 				end
 			endcase
 		end
