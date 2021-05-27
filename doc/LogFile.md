@@ -43,8 +43,13 @@
 * 2021.05.27
 	1. 开始**version3**
 	2. 添加*RAM*模块*DataMem*(`DataMem.vh`，`DataMem.v`)
-
-
+	3. 修改**DataMem**数据存储模块的存储模式为*大端模式*
+	4. 添加内存管理模块**MEM**(`MEM.v`)
+	5. 修改指令执行模块*EX*，增加了与*MEM*模块的三根连线
+	6. 修改`RegFile.v`的格式和注释
+	7. 为`MIPS.v`和`SOC.v`增加更多的注释
+	8. `MIPS.v`中添加内存管理*MEM*模块，`SOC.v`中添加*DataMem(RAM)*模块，连线测试通过
+	9. 增加对指令*sw*和*lw*的支持，测试完毕，无法直接使用*QtSpim*中的*User data segment*
 # Version 4
 
 
