@@ -1,14 +1,15 @@
 /**
  * @file	DataMem.v
  * @author	LiuChuanXi
- * @date	2021.05.27
- * @version	V3.1
+ * @date	2021.05.28
+ * @version	V3.2
  * @brief	数据段DataMem模块
  * @par	修改日志
  * <table>
  * <tr><th>Date			<th>Version		<th>Author		<th>Description
  * <tr><td>2021.05.27	<td>V3.0		<td>LiuChuanXi	<td>创建初始版本
  * <tr><td>2021.05.27	<td>V3.1		<td>LiuChuanXi	<td>修改存储模式为大端模式
+ * <tr><td>2021.05.28	<td>V3.2		<td>LiuChuanXi	<td>添加对地址的掩码运算，取出有效地址
  * </table>
  */
 
@@ -31,6 +32,7 @@
  * @warning addr最低两位必须是00，这里不检查最低两位是否为00
  * @warning 不进行初始化，如果直接读取会得到不定态
  * @warning 读操作为组合逻辑，写操作为时序逻辑
+ * @warning	通过对地址进行掩码运算来取得有效地址(地址重映射)，读取写入数据时不要超出范围
  */
 module DataMem(
 	clk,
@@ -50,6 +52,7 @@ module DataMem(
 
 	/* private */
 	reg[`WIDTH_RAM-1:0] ram[`DEPTH_RAM-1:0];//RAM实际存储单元
+	reg[`LEN_ADDR_RAM-1:0] addrMask;		//保存经过掩码运算(地址重映射)后的地址
 
 
 	/* 初始化 */
@@ -63,10 +66,14 @@ module DataMem(
 	always@(*) begin
 		/* 片选使能信号ce有效(`ENABLE)，读写控制信号we无效(`DISABLE) */
 		if((ce == `ENABLE) && (we == `DISABLE)) begin
+			/* 对地址进行掩码运算，得到有效地址(地址重映射) */
+			addrMask <= addr & `ADDR_MASK_RAM;
 			/* 警告：这里不检查地址最低两位是否为00 */
 			rdData <= {
-				ram[addr + `REG_LENGTH'h0], ram[addr + `REG_LENGTH'h1],
-				ram[addr + `REG_LENGTH'h2], ram[addr + `REG_LENGTH'h3]
+				ram[addrMask + `REG_LENGTH'h0],
+				ram[addrMask + `REG_LENGTH'h1],
+				ram[addrMask + `REG_LENGTH'h2],
+				ram[addrMask + `REG_LENGTH'h3]
 			};
 		end
 		else begin
@@ -80,14 +87,16 @@ module DataMem(
 	always@(posedge clk) begin
 		/* 片选信号ce有效(`ENABLE)，读写控制信号we有效(`ENABLE) */
 		if((ce == `ENABLE) && (we == `ENABLE)) begin
+			/* 对地址进行掩码运算，得到有效地址(地址重映射) */
+			addrMask <= addr & `ADDR_MASK_RAM;
 			/**
 			 * 警告：这里不检查地址最低两位是否为00
-			 * 这里使用大端序存储
+			 * 注意：使用大端序存储
 			 */
-			ram[addr + `REG_LENGTH'h0] <= wtData[31:24];
-			ram[addr + `REG_LENGTH'h1] <= wtData[23:16];
-			ram[addr + `REG_LENGTH'h2] <= wtData[15:8];
-			ram[addr + `REG_LENGTH'h3] <= wtData[7:0];
+			ram[addrMask + `REG_LENGTH'h0] <= wtData[31:24];
+			ram[addrMask + `REG_LENGTH'h1] <= wtData[23:16];
+			ram[addrMask + `REG_LENGTH'h2] <= wtData[15:8];
+			ram[addrMask + `REG_LENGTH'h3] <= wtData[7:0];
 		end
 	end
 
