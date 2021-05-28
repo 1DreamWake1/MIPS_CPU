@@ -64,7 +64,10 @@ module DataMem(
 		/* 片选使能信号ce有效(`ENABLE)，读写控制信号we无效(`DISABLE) */
 		if((ce == `ENABLE) && (we == `DISABLE)) begin
 			/* 警告：这里不检查地址最低两位是否为00 */
-			rdData <= {ram[addr], ram[addr+1], ram[addr+2], ram[addr+3]};
+			rdData <= {
+				ram[addr + `REG_LENGTH'h0], ram[addr + `REG_LENGTH'h1],
+				ram[addr + `REG_LENGTH'h2], ram[addr + `REG_LENGTH'h3]
+			};
 		end
 		else begin
 			/* 除了进行正常读取操作，其余情况一律输出高阻态 */
@@ -81,10 +84,10 @@ module DataMem(
 			 * 警告：这里不检查地址最低两位是否为00
 			 * 这里使用大端序存储
 			 */
-			ram[addr+0] <= wtData[31:24];
-			ram[addr+1] <= wtData[23:16];
-			ram[addr+2] <= wtData[15:8];
-			ram[addr+3] <= wtData[7:0];
+			ram[addr + `REG_LENGTH'h0] <= wtData[31:24];
+			ram[addr + `REG_LENGTH'h1] <= wtData[23:16];
+			ram[addr + `REG_LENGTH'h2] <= wtData[15:8];
+			ram[addr + `REG_LENGTH'h3] <= wtData[7:0];
 		end
 	end
 
