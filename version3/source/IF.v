@@ -1,8 +1,8 @@
 /**
  * @file	IF.v
  * @author	LiuChuanXi
- * @date	2021.05.26
- * @version	V2.1
+ * @date	2021.05.28
+ * @version	V3.0
  * @brief	MIPS CPU的取指令模块
  * @par	修改日志
  * <table>
@@ -12,6 +12,7 @@
  * <tr><td>2021.05.25	<td>V1.2		<td>LiuChuanXi	<td>将rst和pc功能分成两个always块，pc初始值改为FC
  * <tr><td>2021.05.26	<td>V2.0		<td>LiuChuanXi	<td>开始version2
  * <tr><td>2021.05.26	<td>V2.1		<td>LiuChuanXi	<td>增加了对J型指令的支持
+ * <tr><td>2021.05.28	<td>V3.0		<td>LiuChuanXi	<td>增加了对PC初始值(复位值)的宏定义
  * </table>
  */
 
@@ -48,8 +49,8 @@ module IF(
 
 	/* 模块初始化 */
 	initial begin
-		/* PC归零 */
-		pc <= ({`PC_LENGTH{1'b0}} - `PC_STEP);
+		/* PC初始化 */
+		pc <= `PC_START;
 		/* 指令存储器InstMem模块使能 */
 		romCe <= `DISABLE;
 	end
@@ -58,8 +59,8 @@ module IF(
 	always@(rst) begin
 		/* 复位信号rst有效 */
 		if(rst == `ENABLE) begin
-			/* PC归零 */
-			pc <= ({`PC_LENGTH{1'b0}} - `PC_STEP);
+			/* PC重置 */
+			pc <= `PC_START;
 			/* 指令存储器InstMem模块使能 */
 			romCe <= `DISABLE;
 		end
