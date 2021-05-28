@@ -28,7 +28,7 @@
 `define LEN_DATA_ROM	32	//length of the inst
 
 /* 定义地址掩码，截取地址中实际有用的低(log2(`DEPTH_ROM)-1)位 */
-`define ADDR_MASK_ROM	{{`LEN_ADDR_ROM{1'b0}} + (`DEPTH_ROM - 1)}
+`define ADDR_MASK_ROM	`LEN_ADDR_ROM'h0000_03FF
 
 /* 定义使能ENABLE和关闭DISABLE */
 `ifndef ENABLE
