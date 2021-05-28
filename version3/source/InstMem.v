@@ -2,7 +2,7 @@
  * @file	InstMem.v
  * @author	LiuChuanXi
  * @date	2021.05.28
- * @version	V3.1
+ * @version	V3.2
  * @brief	InstMem模块使用ROM
  * @par	修改日志
  * <table>
@@ -11,6 +11,7 @@
  * <tr><td>2021.05.13	<td>V1.1		<td>LiuChuanXi	<td>修改输出数据宽度与指令宽度相同
  * <tr><td>2021.05.27	<td>V3.0		<td>LiuChuanXi	<td>修改存储器变量名，改进代码格式
  * <tr><td>2021.05.28	<td>V3.1		<td>LiuChuanXi	<td>添加对地址的掩码运算，取出有效地址
+ * <tr><td>2021.05.28	<td>V3.2		<td>LiuChuanXi	<td>将对地址的掩码运算放入独立的always块
  * </table>
  */
 
@@ -48,6 +49,8 @@ module InstMem(
 	initial begin
 		/* 输出高阻态 */
 		data = {`LEN_DATA_ROM{1'bz}};
+		/* 对地址进行掩码运算结果 */
+		addrMask <= {`LEN_ADDR_ROM{1'bz}};
 		/* 读取InstMemFile.txt初始化ROM指令存储器 */
 		$readmemh("MemFile/InstMemFile.txt", rom);
 	end
@@ -55,8 +58,6 @@ module InstMem(
 
 	/* 功能 */
 	always@(*) begin
-		/* 对地址进行掩码运算，得到有效地址(地址重映射) */
-		addrMask <= addr & `ADDR_MASK_ROM;
 		/* 当ce有效输出addr对应的数据，否则输出高阻态 */
 		if(ce == `ENABLE) begin
 			data <= {
@@ -68,6 +69,20 @@ module InstMem(
 		end
 		else begin
 			data <= {`LEN_DATA_ROM{1'bz}};
+		end
+	end
+
+
+	/* 地址掩码运算(地址重映射) */
+	always@(*) begin
+		/* 片选使能信号ce有效(`ENABLE) */
+		if(ce == `ENABLE) begin
+		/* 对地址进行掩码运算，得到有效地址(地址重映射) */
+			addrMask <= addr & `ADDR_MASK_ROM;
+		end
+		else begin
+			/* 片选信号ce无效时，运算结果为高阻态 */
+			addrMask <= {`LEN_ADDR_ROM{1'bz}};
 		end
 	end
 
