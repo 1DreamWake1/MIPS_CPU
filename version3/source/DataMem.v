@@ -2,7 +2,7 @@
  * @file	DataMem.v
  * @author	LiuChuanXi
  * @date	2021.05.28
- * @version	V3.2
+ * @version	V3.3
  * @brief	数据段DataMem模块
  * @par	修改日志
  * <table>
@@ -10,6 +10,7 @@
  * <tr><td>2021.05.27	<td>V3.0		<td>LiuChuanXi	<td>创建初始版本
  * <tr><td>2021.05.27	<td>V3.1		<td>LiuChuanXi	<td>修改存储模式为大端模式
  * <tr><td>2021.05.28	<td>V3.2		<td>LiuChuanXi	<td>添加对地址的掩码运算，取出有效地址
+ * <tr><td>2021.05.28	<td>V3.3		<td>LiuChuanXi	<td>将对地址的掩码运算放入独立的always块
  * </table>
  */
 
@@ -59,6 +60,8 @@ module DataMem(
 	initial begin
 		/* 读取数据输出为高阻态 */
 		rdData <= {`LEN_DATA_RAM{1'bz}};
+		/* 地址掩码运算结果 */
+		addrMask <= {`LEN_ADDR_RAM{1'bz}};
 	end
 
 
@@ -66,8 +69,6 @@ module DataMem(
 	always@(*) begin
 		/* 片选使能信号ce有效(`ENABLE)，读写控制信号we无效(`DISABLE) */
 		if((ce == `ENABLE) && (we == `DISABLE)) begin
-			/* 对地址进行掩码运算，得到有效地址(地址重映射) */
-			addrMask <= addr & `ADDR_MASK_RAM;
 			/* 警告：这里不检查地址最低两位是否为00 */
 			rdData <= {
 				ram[addrMask + `REG_LENGTH'h0],
@@ -87,8 +88,6 @@ module DataMem(
 	always@(posedge clk) begin
 		/* 片选信号ce有效(`ENABLE)，读写控制信号we有效(`ENABLE) */
 		if((ce == `ENABLE) && (we == `ENABLE)) begin
-			/* 对地址进行掩码运算，得到有效地址(地址重映射) */
-			addrMask <= addr & `ADDR_MASK_RAM;
 			/**
 			 * 警告：这里不检查地址最低两位是否为00
 			 * 注意：使用大端序存储
@@ -100,5 +99,17 @@ module DataMem(
 		end
 	end
 
+	/* 地址掩码运算(地址重映射) */
+	always@(*) begin
+		/* 片选使能信号ce有效(`ENABLE) */
+		if(ce == `ENABLE) begin
+		/* 对地址进行掩码运算，得到有效地址(地址重映射) */
+			addrMask <= addr & `ADDR_MASK_RAM;
+		end
+		else begin
+			/* 片选信号ce无效时，运算结果为高阻态 */
+			addrMask <= {`LEN_ADDR_RAM{1'bz}};
+		end
+	end
 
 endmodule
