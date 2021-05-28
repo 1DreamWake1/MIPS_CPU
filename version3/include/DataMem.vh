@@ -26,7 +26,7 @@
 `define LEN_DATA_RAM	32		//length of the ram IO data length
 
 /* 定义地址掩码，截取地址中实际有用的低(log2(`DEPTH_RAM)-1)位 */
-`define ADDR_MASK_RAM	{{`LEN_ADDR_RAM{1'b0}} + (`DEPTH_RAM - 1)}
+`define ADDR_MASK_RAM	`LEN_ADDR_RAM'h0000_03FF
 
 /* 定义使能ENABLE和关闭DISABLE */
 `ifndef ENABLE
