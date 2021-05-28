@@ -76,7 +76,7 @@ module MIPS(
 	wire[`REG_LENGTH-1:0] memData_i;					//EX->MEM，传递给MEM的数据
 	/* MEM RegFile */
 	wire[`REG_LENGTH-1:0] regData;						//MEM->RegFile，目的寄存器的值
-	wire[`REG_LENGTH-1:0] regAddr;						//MEM->RegFile，目的寄存器的地址
+	wire[`REG_ADDR_LEN-1:0] regAddr;					//MEM->RegFile，目的寄存器的地址
 	wire regWr;											//MEM->RegFile，目的寄存器的写控制信号
 	/* IF ID */
 	wire[`PC_LENGTH-1:0] jAddr;							//ID->IF，跳转指令跳转目标地址
