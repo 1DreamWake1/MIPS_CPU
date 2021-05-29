@@ -1,8 +1,8 @@
 /**
  * @file	RegFile.v
  * @author	LiuChuanXi
- * @date	2021.05.27
- * @version	V3.0
+ * @date	2021.05.29
+ * @version	V4.0
  * @brief	MIPS_CPU寄存器堆(RegFile)模块
  * @par	修改日志
  * <table>
@@ -11,6 +11,7 @@
  * <tr><td>2021.05.23	<td>V1.1		<td>LiuChuanXi	<td>将读取改为组合逻辑，写入改为时序逻辑
  * <tr><td>2021.05.25	<td>V1.2		<td>LiuChuanXi	<td>整理包含头文件
  * <tr><td>2021.05.27	<td>V3.0		<td>LiuChuanXi	<td>整理格式和注释
+ * <tr><td>2021.05.29	<td>V4.0		<td>LiuChuanXi	<td>增加对0号寄存器zero的写禁止
  * </table>
  */
 
@@ -34,6 +35,7 @@
  * @param	regbData	output，寄存器B读出的数据
  * @warning	没有增加同时对同一个寄存器进行读写的隔离
  * @warning	读取为组合逻辑，写入为时序逻辑
+ * @warning	零号寄存器zero禁止写入
  */
 module RegFile(
 	clk, rst,
@@ -99,8 +101,8 @@ module RegFile(
 
 	/* 写入，时序逻辑 */
 	always@(posedge clk) begin
-		/* 复位信号rst无效，且写信号we有效 */
-		if((rst == `DISABLE) && (we == `ENABLE)) begin
+		/* 复位信号rst无效，且写信号we有效，且写入的寄存器不为零号寄存器zero */
+		if((rst == `DISABLE) && (we == `ENABLE) && (wAddr != {`REG_ADDR_LEN{1'b0}})) begin
 			/* 警告：如果同时读写同一个寄存器会出现不可预料的错误，后续需要增加隔离操作 */
 			register[wAddr] <= wData;
 		end
