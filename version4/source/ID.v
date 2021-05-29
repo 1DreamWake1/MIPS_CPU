@@ -1,8 +1,8 @@
 /**
  * @file	ID.vh
  * @author	LiuChuanXi
- * @date	2021.05.27
- * @version	V3.0
+ * @date	2021.05.29
+ * @version	V4.0
  * @brief	MIPS_CPU指令译码ID模块
  * @par	修改日志
  * <table>
@@ -15,6 +15,7 @@
  * <tr><td>2021.05.26	<td>V2.1		<td>LiuChuanXi	<td>增加对J型指令的支持
  * <tr><td>2021.05.26	<td>V2.2		<td>LiuChuanXi	<td>J型指令完成，version2完成
  * <tr><td>2021.05.27	<td>V3.0		<td>LiuChuanXi	<td>开始version3,增加对lw和sw指令的支持
+ * <tr><td>2021.05.29	<td>V4.0		<td>LiuChuanXi	<td>开始version4，增加对空指令nop的支持
  * </table>
  */
 
@@ -77,7 +78,7 @@ module ID(
 	/* 模块初始化 */
 	initial begin
 		/* op段输出空指令CMD_NONE */
-		op <= `CMD_NONE;
+		op <= `CMD_NOP;
 		/* 寄存器读写控制信号关闭 */
 		regaRd <= `DISABLE;
 		regbRd <= `DISABLE;
@@ -99,7 +100,7 @@ module ID(
 		/* 复位信号rst有效 */
 		if(rst == `ENABLE) begin
 			/* op段输出空指令CMD_NONE */
-			op <= `CMD_NONE;
+			op <= `CMD_NOP;
 			/* 寄存器读写控制信号关闭 */
 			regaRd <= `DISABLE;
 			regbRd <= `DISABLE;
@@ -114,7 +115,38 @@ module ID(
 		end
 	end
 
+
 	/* 译码功能*/
+
+	/**
+	 * instructions		NOP
+	 * type				NOP
+	 * detail			To perform no operation
+	 * inst[31:0]	==	32'h0000_0000
+	 */
+	always@(*) begin
+		/* 复位信号rst无效 */
+		if((rst == `DISABLE) && (inst == `INST_LENGTH'h0000_0000))
+		begin
+			/* op传递CMD操作码 */
+			op <= `CMD_NOP;
+			/* a读使能信号，与地址 */
+			regaRd <= `DISABLE;
+			regaAddr <= {`REG_ADDR_LEN{1'b0}};
+			/* b读使能信号，与地址 */
+			regbRd <= `DISABLE;
+			regbAddr <= {`REG_ADDR_LEN{1'b0}};
+			/* c写使能信号，与地址 */
+			regcWr <= `DISABLE;
+			regcAddr <= {`REG_ADDR_LEN{1'b0}};
+			/* 寄存器a和b数据输出 */
+			regaData <= regaData_i;
+			regbData <= regbData_i;
+			/* 跳转指令功能 */
+			jAddr <= `PC_NULL;
+			jCe <= `DISABLE;
+		end
+	end
 
 	/**
 	 * instructions		ADD

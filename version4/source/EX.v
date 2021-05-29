@@ -1,8 +1,8 @@
 /**
  * @file	EX.v
  * @author	LiuChuanXi
- * @date	2021.05.27
- * @version	V3.1
+ * @date	2021.05.29
+ * @version	V4.0
  * @brief	MIPS_CPU执行模块EX
  * @par	修改日志
  * <table>
@@ -14,6 +14,7 @@
  * <tr><td>2021.05.26	<td>V2.2		<td>LiuChuanXi	<td>J型指令完成，version2完成
  * <tr><td>2021.05.26	<td>V3.0		<td>LiuChuanXi	<td>version3开始，增加与MEM间的三根线
  * <tr><td>2021.05.26	<td>V3.1		<td>LiuChuanXi	<td>修改与MEM模块端口的名称加上"_i"
+ * <tr><td>2021.05.29	<td>V4.0		<td>LiuChuanXi	<td>开始Version4，增加对空指令nop的支持
  * </table>
  */
 
@@ -99,6 +100,16 @@ module EX(
 		if(rst == `DISABLE) begin
 			/* 根据op进行相应运算 */
 			case(op_i)
+				`CMD_NOP: begin
+			 		/* 寄存器部分 */
+					regcData <= {`REG_LENGTH{1'b0}};
+					regcWr <= regcWr_i;
+					regcAddr <= regcAddr_i;
+					/* 非寄存器部分(RAM或IO) */
+					op <= op_i;
+					memAddr_i <= {`REG_LENGTH{1'b0}};
+					memData_i <= {`REG_LENGTH{1'b0}};
+				end
 				`CMD_ADD: begin
 			 		/* 寄存器部分 */
 					regcData <= regaData + regbData;
