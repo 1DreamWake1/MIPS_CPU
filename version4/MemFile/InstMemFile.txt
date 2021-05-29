@@ -1,0 +1,33 @@
+/**
+ * @file	InstMemFile.txt
+ * @author	LiuChuanXi
+ * @date	2021.05.28
+ * @version	V3.1
+ * @brief	指令只读存储器ROM，属于InstMem模块，以十六进制存放指令
+ * @par	修改日志
+ * <table>
+ * <tr><th>Date			<th>Version		<th>Author		<th>Description
+ * <tr><td>2021.04.28	<td>V1.0		<td>LiuChuanXi	<td>创建初始版本
+ * <tr><td>2021.05.25	<td>V1.1		<td>LiuChuanXi	<td>version1基本指令测试完成
+ * <tr><td>2021.05.26	<td>V2.0		<td>LiuChuanXi	<td>version2
+ * <tr><td>2021.05.26	<td>V2.1		<td>LiuChuanXi	<td>version2测试完成
+ * <tr><td>2021.05.28	<td>V3.0		<td>LiuChuanXi	<td>version3
+ * <tr><td>2021.05.28	<td>V3.1		<td>LiuChuanXi	<td>version3测试完成
+ * </table>
+ */
+
+
+20 10 00 0b		//  addi $16, $0, 10         ; 5: addi $s0, $zero, 11 #累加目标值 
+12 30 00 06		//  beq $17, $16, 24 [loop2-0x00400004]
+22 31 00 01		//  addi $17, $17, 1         ; 9: addi $s1, $s1, 1 #计数器自加 
+02 51 90 20		//  add $18, $18, $17        ; 10: add $s2, $s2, $s1 #计算累加 
+00 11 98 80		//  sll $19, $17, 2          ; 11: sll $s3, $s1, 2 #得到存储地址 
+ae 72 00 00		//  sw $18, 0($19)           ; 12: sw $s2, 0($s3) #将结果写入RAM 
+08 10 00 01		//  j 0x00400004 [loop1]     ; 13: j loop1 #继续循环 
+12 20 00 05		//  beq $17, $0, 20 [end-0x0040001c]
+22 31 ff ff		//  addi $17, $17, -1        ; 17: sub $s1, $s1, 1 #自减 
+00 11 98 80		//  sll $19, $17, 2          ; 18: sll $s3, $s1, 2 #得到存储地址 
+8e 74 00 00		//  lw $20, 0($19)           ; 19: lw $s4, 0($s3) #从RAM中读取数据到$s4
+08 10 00 07		//  j 0x0040001c [loop2]     ; 20: j loop2 #继续循环 
+08 10 00 0c		//  j 0x00400030 [end]       ; 23: j end 
+
