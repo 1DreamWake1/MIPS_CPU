@@ -2,7 +2,7 @@
  * @file	SOC.vh
  * @author	LiuChuanXi
  * @date	2021.05.29
- * @version	V4.1
+ * @version	V4.2
  * @brief	SOC顶层所需宏定义文件
  * @par	修改日志
  * <table>
@@ -10,6 +10,7 @@
  * <tr><td>2021.05.25	<td>V1.0		<td>LiuChuanXi	<td>创建初始版本
  * <tr><td>2021.05.29	<td>V4.0		<td>LiuChuanXi	<td>修改包含关系
  * <tr><td>2021.05.29	<td>V4.1		<td>LiuChuanXi	<td>添加输入输出IO模块
+ * <tr><td>2021.05.29	<td>V4.2		<td>LiuChuanXi	<td>添加RAM和IO访问控制模块MIOC
  * </table>
  */
 
@@ -24,6 +25,9 @@
 
 /* InstMem(ROM)*/
 `include "InstMem.vh"
+
+/* MIOC */
+`include "MIOC.vh"
 
 /* DataMem(RAM) */
 `include "DataMem.vh"
