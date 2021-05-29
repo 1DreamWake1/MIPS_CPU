@@ -64,10 +64,22 @@ module IO(
 	end
 
 
+	/* 复位信号rst */
+	always@(rst) begin
+		/* 复位信号rst有效 */
+		if(rst == `ENABLE) begin
+			/* 读取数据输出为高阻态 */
+			rdData <= {`LEN_DATA_IO{1'bz}};
+			/* 地址掩码运算结果 */
+			addrMask <= {`LEN_ADDR_IO{1'bz}};
+		end
+	end
+
+
 	/* 读操作，组合逻辑 */
 	always@(*) begin
-		/* 片选使能信号ce有效(`ENABLE)，读写控制信号we无效(`DISABLE) */
-		if((ce == `ENABLE) && (we == `DISABLE)) begin
+		/* 复位信号rst无效，片选使能信号ce有效(`ENABLE)，读写控制信号we无效(`DISABLE) */
+		if((rst == `DISABLE) && (ce == `ENABLE) && (we == `DISABLE)) begin
 			/* 警告：这里不检查地址最低两位是否为00 */
 			rdData <= {
 				io_reg[addrMask + `REG_LENGTH'h0],
@@ -85,8 +97,8 @@ module IO(
 
 	/* 写操作，时序逻辑 */
 	always@(posedge clk) begin
-		/* 片选信号ce有效(`ENABLE)，读写控制信号we有效(`ENABLE) */
-		if((ce == `ENABLE) && (we == `ENABLE)) begin
+		/* 复位信号rst无效，片选信号ce有效(`ENABLE)，读写控制信号we有效(`ENABLE) */
+		if((rst == `DISABLE) && (ce == `ENABLE) && (we == `ENABLE)) begin
 			/**
 			 * 警告：这里不检查地址最低两位是否为00
 			 * 注意：使用大端序存储
@@ -101,8 +113,8 @@ module IO(
 
 	/* 地址掩码运算(地址重映射) */
 	always@(*) begin
-		/* 片选使能信号ce有效(`ENABLE) */
-		if(ce == `ENABLE) begin
+		/* 复位信号rst无效，片选使能信号ce有效(`ENABLE) */
+		if((rst == `DISABLE) && (ce == `ENABLE)) begin
 		/* 对地址进行掩码运算，得到有效地址(地址重映射) */
 			addrMask <= addr & `ADDR_MASK_IO;
 		end
