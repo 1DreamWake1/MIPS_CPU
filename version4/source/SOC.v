@@ -1,8 +1,8 @@
 /**
  * @file	SOC.v
  * @author	LiuChuanXi
- * @date	2021.05.27
- * @version	V3.1
+ * @date	2021.05.29
+ * @version	V4.0
  * @brief	MIPS CPU顶层SOC
  * @par	修改日志
  * <table>
@@ -10,22 +10,18 @@
  * <tr><td>2021.05.25	<td>V1.0		<td>LiuChuanXi	<td>创建初始版本
  * <tr><td>2021.05.27	<td>V3.0		<td>LiuChuanXi	<td>增加DataMem(RAM)模块
  * <tr><td>2021.05.27	<td>V3.1		<td>LiuChuanXi	<td>DataMem(RAM)模块连线成功
+ * <tr><td>2021.05.29	<td>V4.0		<td>LiuChuanXi	<td>修改包含关系
  * </table>
  */
 
 
-/* MIPS CPU CORE */
-`include "MIPS.vh"
-/* InstMem指令存储器 */
-`include "InstMem.vh"
-/* DataMem(RAM) */
-`include "DataMem.vh"
+`include "SOC.vh"
 
 
 /**
  * @author	LiuChuanXi
  * @brief	MIPS CPU最顶层SOC模块
- * @param	clk			input，始终信号
+ * @param	clk			input，时钟信号
  * @param	rst			input，复位信号
  */
 module SOC(
@@ -33,8 +29,8 @@ module SOC(
 );
 
 	/* input */
-	input wire clk;
-	input wire rst;
+	input wire clk;					//时钟信号
+	input wire rst;					//复位信号
 
 	/* output */
 
