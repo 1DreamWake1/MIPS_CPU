@@ -1,8 +1,8 @@
 /**
  * @file	DataMem.v
  * @author	LiuChuanXi
- * @date	2021.05.28
- * @version	V3.3
+ * @date	2021.05.29
+ * @version	V4.0
  * @brief	数据段DataMem模块
  * @par	修改日志
  * <table>
@@ -11,6 +11,7 @@
  * <tr><td>2021.05.27	<td>V3.1		<td>LiuChuanXi	<td>修改存储模式为大端模式
  * <tr><td>2021.05.28	<td>V3.2		<td>LiuChuanXi	<td>添加对地址的掩码运算，取出有效地址
  * <tr><td>2021.05.28	<td>V3.3		<td>LiuChuanXi	<td>将对地址的掩码运算放入独立的always块
+ * <tr><td>2021.05.29	<td>V4.0		<td>LiuChuanXi	<td>修改使用外部宏的错误，近使用内部宏
  * </table>
  */
 
@@ -24,7 +25,7 @@
  * @detail	当前版本有效地址空间为[1023:0]，其中[2047:1024]用于IO映射
  * @detail	使用大端形式存储，即数据高位存在低地址单元
  * @param	clk		input，时钟信号
- * @param	ce		input，RAM片选，为1时可读，为0时输出高阻态
+ * @param	ce		input，RAM片选使能信号
  * @param	we		input，RAM读写控制信号，为0时进行读操作，为1时进行写操作
  * @param	wtData	input，写操作的数据输入
  * @param	addr	input，所读/写空间的地址
@@ -47,7 +48,7 @@ module DataMem(
 	input wire we;							//RAM片选，为1时可读，为0时输出高阻态
 	input wire[`LEN_DATA_RAM-1:0] wtData;	//写操作的数据输入
 	input wire[`LEN_ADDR_RAM-1:0] addr;		//所读/写空间的地址
-	
+
 	/* output */
 	output reg[`LEN_DATA_RAM-1:0] rdData;	//所读出的数据
 
@@ -71,10 +72,10 @@ module DataMem(
 		if((ce == `ENABLE) && (we == `DISABLE)) begin
 			/* 警告：这里不检查地址最低两位是否为00 */
 			rdData <= {
-				ram[addrMask + `REG_LENGTH'h0],
-				ram[addrMask + `REG_LENGTH'h1],
-				ram[addrMask + `REG_LENGTH'h2],
-				ram[addrMask + `REG_LENGTH'h3]
+				ram[addrMask + `LEN_ADDR_RAM'h0],
+				ram[addrMask + `LEN_ADDR_RAM'h1],
+				ram[addrMask + `LEN_ADDR_RAM'h2],
+				ram[addrMask + `LEN_ADDR_RAM'h3]
 			};
 		end
 		else begin
@@ -92,12 +93,13 @@ module DataMem(
 			 * 警告：这里不检查地址最低两位是否为00
 			 * 注意：使用大端序存储
 			 */
-			ram[addrMask + `REG_LENGTH'h0] <= wtData[31:24];
-			ram[addrMask + `REG_LENGTH'h1] <= wtData[23:16];
-			ram[addrMask + `REG_LENGTH'h2] <= wtData[15:8];
-			ram[addrMask + `REG_LENGTH'h3] <= wtData[7:0];
+			ram[addrMask + `LEN_ADDR_RAM'h0] <= wtData[31:24];
+			ram[addrMask + `LEN_ADDR_RAM'h1] <= wtData[23:16];
+			ram[addrMask + `LEN_ADDR_RAM'h2] <= wtData[15:8];
+			ram[addrMask + `LEN_ADDR_RAM'h3] <= wtData[7:0];
 		end
 	end
+
 
 	/* 地址掩码运算(地址重映射) */
 	always@(*) begin
