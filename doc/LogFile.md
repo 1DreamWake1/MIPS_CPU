@@ -74,5 +74,7 @@
 	1. 修改**MIOC**模块中不工作时，对**DataMem(RAM)**和**IO(register)**的*地址线*和*写数据线*为0
 	2. 通过`4_3.s`测试**MIOC**访问**IO(register)**成功
 	3. ***version4***完成
+	4. 添加对***version5***和***version6***的设计
+	5. 更新`README.md`有关***version5***和***version6***的描述
 
 
