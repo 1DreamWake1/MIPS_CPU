@@ -26,6 +26,9 @@
 	- [Version 5](#version-5)
 		- [说明](#说明-4)
 		- [原理图](#原理图-4)
+	- [Version 6](#version-6)
+		- [说明](#说明-5)
+		- [原理图](#原理图-5)
 
 
 
@@ -84,8 +87,19 @@
 ### 说明
 
 1. 在`Version 4`的基础上增加对**MIPS12条整数指令**的支持
+2. 添加`HI/LO`模块
 
 ### 原理图
 
-![Version 5](doc/MIPS_4.jpg)
+![Version 5](doc/MIPS_5.jpg)
 ![MIPS_12_inst](doc/MIPS_12_inst.png)
+
+## Version 6
+
+### 说明
+
+1. 在`Version 5`的基础上增加**GPIO**通用输入输出模块
+
+### 原理图
+
+![Version 6](doc/MIPS_6.jpg)
