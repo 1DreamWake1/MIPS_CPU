@@ -2,7 +2,7 @@
 
 1. 为了加深自己对`CPU`的认识以及完成***计算机组成原理***这门课程的任务要求，使用`Verilog`实现`MIPS CPU`的设计。
 2. 整个过程从简单到复杂，每个版本单独占用一个目录。
-3. 开发环境使用在`Deepin20`下使用`VScode`、`iverilog`、`GTKWave`
+3. 开发环境使用在`Deepin20`下使用`VScode`、`iverilog`、`GTKWave`、`QtSpim`
 
 
 
@@ -23,6 +23,9 @@
 	- [Version 4](#version-4)
 		- [说明](#说明-3)
 		- [原理图](#原理图-3)
+	- [Version 5](#version-5)
+		- [说明](#说明-4)
+		- [原理图](#原理图-4)
 
 
 
@@ -36,6 +39,7 @@
 ### 说明
 
 1. 仅完成最基础的框架
+2. 仅支持基础的**R型**和**I型**指令
 
 ### 原理图
 
@@ -57,6 +61,7 @@
 
 1. 在`Version 2`的基础上增加了`MEM`(存储管理)模块，用于区分`RegFile`和`DataMem`
 2. 使用**哈佛结构**，**指令存储**和**数据存储**分开
+3. 增加对*lw*指令和*sw*指令的支持
 
 ### 原理图
 
@@ -67,7 +72,20 @@
 ### 说明
 
 1. 在`Version 3`的基础上增加了`MIOC`模块，用于区分`DataMem`和`IO`
+2. 完善**20条MIPS整数指令**
 
 ### 原理图
 
 ![Version 4](doc/MIPS_4.jpg)
+![MIPS_20_inst](doc/MIPS_20_inst.png)
+
+## Version 5
+
+### 说明
+
+1. 在`Version 4`的基础上增加对**MIPS12条整数指令**的支持
+
+### 原理图
+
+![Version 5](doc/MIPS_4.jpg)
+![MIPS_12_inst](doc/MIPS_12_inst.png)
