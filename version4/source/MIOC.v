@@ -1,14 +1,15 @@
 /**
  * @file	MIOC.vh
  * @author	LiuChuanXi
- * @date	2021.05.29
- * @version	V4.1
+ * @date	2021.05.30
+ * @version	V4.2
  * @brief	对RAM和IO控制的MIOC模块
  * @par	修改日志
  * <table>
  * <tr><th>Date			<th>Version		<th>Author		<th>Description
  * <tr><td>2021.05.29	<td>V4.0		<td>LiuChuanXi	<td>创建初始版本
  * <tr><td>2021.05.29	<td>V4.1		<td>LiuChuanXi	<td>修改读写控制信号xxWr为xxWe
+ * <tr><td>2021.05.30	<td>V4.2		<td>LiuChuanXi	<td>修改修改不工作时ram和io的地址线和数据线为0
  * </table>
  */
 
@@ -81,13 +82,13 @@ module MIOC(
 		/* DataMem(RAM) */
 		ramCe <= `DISABLE;
 		ramWe <= `DISABLE;
-		ramAddr <= {`LEN_ADDR_MIOC{1'bz}};
-		ramWtData <= {`LEN_DATA_MIOC{1'bz}};
+		ramAddr <= {`LEN_ADDR_MIOC{1'b0}};
+		ramWtData <= {`LEN_DATA_MIOC{1'b0}};
 		/* IO(register) */
 		ioCe <= `DISABLE;
 		ioWe <= `DISABLE;
-		ioAddr <= {`LEN_ADDR_MIOC{1'bz}};
-		ioWtData <= {`LEN_DATA_MIOC{1'bz}};
+		ioAddr <= {`LEN_ADDR_MIOC{1'b0}};
+		ioWtData <= {`LEN_DATA_MIOC{1'b0}};
 	end
 
 
@@ -100,13 +101,13 @@ module MIOC(
 			/* DataMem(RAM) */
 			ramCe <= `DISABLE;
 			ramWe <= `DISABLE;
-			ramAddr <= {`LEN_ADDR_MIOC{1'bz}};
-			ramWtData <= {`LEN_DATA_MIOC{1'bz}};
+			ramAddr <= {`LEN_ADDR_MIOC{1'b0}};
+			ramWtData <= {`LEN_DATA_MIOC{1'b0}};
 			/* IO(register) */
 			ioCe <= `DISABLE;
 			ioWe <= `DISABLE;
-			ioAddr <= {`LEN_ADDR_MIOC{1'bz}};
-			ioWtData <= {`LEN_DATA_MIOC{1'bz}};
+			ioAddr <= {`LEN_ADDR_MIOC{1'b0}};
+			ioWtData <= {`LEN_DATA_MIOC{1'b0}};
 		end
 	end
 
@@ -126,8 +127,8 @@ module MIOC(
 			/* 其余情况(包括复位)一律按照复位处理 */
 			ramCe <= `DISABLE;
 			ramWe <= `DISABLE;
-			ramAddr <= {`LEN_ADDR_MIOC{1'bz}};
-			ramWtData <= {`LEN_DATA_MIOC{1'bz}};
+			ramAddr <= {`LEN_ADDR_MIOC{1'b0}};
+			ramWtData <= {`LEN_DATA_MIOC{1'b0}};
 		end
 	end
 
@@ -147,8 +148,8 @@ module MIOC(
 			/* 其余情况(包括复位)一律按照复位处理 */
 			ioCe <= `DISABLE;
 			ioWe <= `DISABLE;
-			ioAddr <= {`LEN_ADDR_MIOC{1'bz}};
-			ioWtData <= {`LEN_DATA_MIOC{1'bz}};
+			ioAddr <= {`LEN_ADDR_MIOC{1'b0}};
+			ioWtData <= {`LEN_DATA_MIOC{1'b0}};
 		end
 	end
 
