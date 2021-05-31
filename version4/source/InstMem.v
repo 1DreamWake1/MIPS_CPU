@@ -1,8 +1,8 @@
 /**
  * @file	InstMem.v
  * @author	LiuChuanXi
- * @date	2021.05.28
- * @version	V3.2
+ * @date	2021.05.31
+ * @version	V4.0-1
  * @brief	InstMem模块使用ROM
  * @par	修改日志
  * <table>
@@ -12,6 +12,7 @@
  * <tr><td>2021.05.27	<td>V3.0		<td>LiuChuanXi	<td>修改存储器变量名，改进代码格式
  * <tr><td>2021.05.28	<td>V3.1		<td>LiuChuanXi	<td>添加对地址的掩码运算，取出有效地址
  * <tr><td>2021.05.28	<td>V3.2		<td>LiuChuanXi	<td>将对地址的掩码运算放入独立的always块
+ * <tr><td>2021.05.31	<td>V4.0-1		<td>LiuChuanXi	<td>添加指令初始化，下板用
  * </table>
  */
 
@@ -52,7 +53,13 @@ module InstMem(
 		/* 对地址进行掩码运算结果 */
 		addrMask <= {`LEN_ADDR_ROM{1'bz}};
 		/* 读取InstMemFile.txt初始化ROM指令存储器 */
-		$readmemh("MemFile/InstMemFile.txt", rom);
+		/**
+		 * 仿真使用
+		 * $readmemh("MemFile/InstMemFile.txt", rom);
+		 */
+		 /* 初始化指令存储器 */
+		`INIT_ROM(`LEN_ADDR_ROM'h0000, 8'h21, 8'h08, 8'h00, 8'h01)
+		`INIT_ROM(`LEN_ADDR_ROM'h0004, 8'h08, 8'h10, 8'h00, 8'h00)
 	end
 
 
