@@ -38,9 +38,9 @@
 
 /* IO Device Address */
 /* GPIO */
-`define GPIO_CR_ADDR	(`LEN_ADDR_IO'h0000_0400)	//GPIO输入/输出配置寄存器
-`define GPIO_OR_ADDR	(`LEN_ADDR_IO'h0000_0404)	//GPIO输出寄存器
-`define GPIO_IR_ADDR	(`LEN_ADDR_IO'h0000_0408)	//GPIO输入寄存器
+`define GPIO_CR_ADDR	(`LEN_ADDR_IO'h0000_0000)	//GPIO输入/输出配置寄存器
+`define GPIO_OR_ADDR	(`LEN_ADDR_IO'h0000_0004)	//GPIO输出寄存器
+`define GPIO_IR_ADDR	(`LEN_ADDR_IO'h0000_0008)	//GPIO输入寄存器
 
 
 `endif //__IO_H

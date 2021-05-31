@@ -141,25 +141,41 @@ module IO(
 
 	/* GPIO */
 	always@(*) begin
-		/* GPIO_CR */
-		GPIO_CR <= {
-			io_reg[`GPIO_CR_ADDR + `LEN_ADDR_IO'h3],
-			io_reg[`GPIO_CR_ADDR + `LEN_ADDR_IO'h2],
-			io_reg[`GPIO_CR_ADDR + `LEN_ADDR_IO'h1],
-			io_reg[`GPIO_CR_ADDR + `LEN_ADDR_IO'h0]
-		};
-		/* GPIO_OR */
-		GPIO_OR <= {
-			io_reg[`GPIO_OR_ADDR + `LEN_ADDR_IO'h3],
-			io_reg[`GPIO_OR_ADDR + `LEN_ADDR_IO'h2],
-			io_reg[`GPIO_OR_ADDR + `LEN_ADDR_IO'h1],
-			io_reg[`GPIO_OR_ADDR + `LEN_ADDR_IO'h0]
-		};
-		/* GPIO_IR */
-		io_reg[`GPIO_IR_ADDR + `LEN_ADDR_IO'h3] <= GPIO_IR[31:24];
-		io_reg[`GPIO_IR_ADDR + `LEN_ADDR_IO'h2] <= GPIO_IR[23:16];
-		io_reg[`GPIO_IR_ADDR + `LEN_ADDR_IO'h1] <= GPIO_IR[15:8];
-		io_reg[`GPIO_IR_ADDR + `LEN_ADDR_IO'h0] <= GPIO_IR[7:0];
+		/* 复位信号rst无效 */
+		if(rst == `DISABLE) begin
+			/* GPIO_CR */
+			GPIO_CR <= {
+				io_reg[`GPIO_CR_ADDR + `LEN_ADDR_IO'h3],
+				io_reg[`GPIO_CR_ADDR + `LEN_ADDR_IO'h2],
+				io_reg[`GPIO_CR_ADDR + `LEN_ADDR_IO'h1],
+				io_reg[`GPIO_CR_ADDR + `LEN_ADDR_IO'h0]
+			};
+			/* GPIO_OR */
+			GPIO_OR <= {
+				io_reg[`GPIO_OR_ADDR + `LEN_ADDR_IO'h3],
+				io_reg[`GPIO_OR_ADDR + `LEN_ADDR_IO'h2],
+				io_reg[`GPIO_OR_ADDR + `LEN_ADDR_IO'h1],
+				io_reg[`GPIO_OR_ADDR + `LEN_ADDR_IO'h0]
+			};
+			/* GPIO_IR */
+			io_reg[`GPIO_IR_ADDR + `LEN_ADDR_IO'h3] <= GPIO_IR[31:24];
+			io_reg[`GPIO_IR_ADDR + `LEN_ADDR_IO'h2] <= GPIO_IR[23:16];
+			io_reg[`GPIO_IR_ADDR + `LEN_ADDR_IO'h1] <= GPIO_IR[15:8];
+			io_reg[`GPIO_IR_ADDR + `LEN_ADDR_IO'h0] <= GPIO_IR[7:0];
+		end
+		else begin
+			/* 复位信号rst有效 */
+			/* GPIO_CR */
+			io_reg[`GPIO_CR_ADDR + `LEN_ADDR_IO'h3] <= {`LEN_DATA_IO{1'b0}};
+			io_reg[`GPIO_CR_ADDR + `LEN_ADDR_IO'h2] <= {`LEN_DATA_IO{1'b0}};
+			io_reg[`GPIO_CR_ADDR + `LEN_ADDR_IO'h1] <= {`LEN_DATA_IO{1'b0}};
+			io_reg[`GPIO_CR_ADDR + `LEN_ADDR_IO'h0] <= {`LEN_DATA_IO{1'b0}};
+			/* GPIO_OR */
+			io_reg[`GPIO_OR_ADDR + `LEN_ADDR_IO'h3] <= {`LEN_DATA_IO{1'b0}};
+			io_reg[`GPIO_OR_ADDR + `LEN_ADDR_IO'h2] <= {`LEN_DATA_IO{1'b0}};
+			io_reg[`GPIO_OR_ADDR + `LEN_ADDR_IO'h1] <= {`LEN_DATA_IO{1'b0}};
+			io_reg[`GPIO_OR_ADDR + `LEN_ADDR_IO'h0] <= {`LEN_DATA_IO{1'b0}};
+		end
 	end
 
 
