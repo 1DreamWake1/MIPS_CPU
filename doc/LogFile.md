@@ -4,6 +4,7 @@
 - [Version 2](#version-2)
 - [Version 3](#version-3)
 - [Version 4](#version-4)
+- [vivado-v4](#vivado-v4)
 
 # Version 1
 * 2021.04.28
@@ -77,4 +78,11 @@
 	4. 添加对***version5***和***version6***的设计
 	5. 更新`README.md`有关***version5***和***version6***的描述
 
+# vivado-v4
+* 2021.05.31
+	1. 向`IO.vh`和`IO.v`和`SOC.v`添加有关**GPIO**输入输出的说明(**不是模块!**)
+	2. 添加下板代码`4_4v.s`(未完成)
+	3. 添加下板用的**InstMem(ROM)**指令初始化
+	4. 添加下板用**RegFile**的寄存器初始化
+	5. `vivado-v4`第一次迁移完成，准备下板
 
