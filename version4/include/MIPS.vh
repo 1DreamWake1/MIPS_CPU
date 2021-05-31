@@ -1,8 +1,8 @@
 /**
  * @file	MIPS.vh
  * @author	LiuChuanXi
- * @date	2021.05.29
- * @version	V4.0
+ * @date	2021.05.31
+ * @version	V4.0-1
  * @brief	MIPS所需宏定义文件
  * @par	修改日志
  * <table>
@@ -11,6 +11,7 @@
  * <tr><td>2021.05.26	<td>V2.0		<td>LiuChuanXi	<td>开始Version2
  * <tr><td>2021.05.28	<td>V3.0		<td>LiuChuanXi	<td>开始version3，增加了对PC初始值(复位值)的宏定义
  * <tr><td>2021.05.29	<td>V4.0		<td>LiuChuanXi	<td>开始version4，增加对空指令nop的支持
+ * <tr><td>2021.05.31	<td>V4.0-1		<td>LiuChuanXi	<td>添加下板用寄存器初始化宏
  * </table>
  */
 
@@ -43,7 +44,40 @@
 `define REG_ADDR_LEN	5
 /* 寄存器位宽，MIPS默认32位 */
 `define REG_LENGTH	32
-
+/* 寄存器初始化宏 */
+`define REG_INIT\
+	register[0] <= `REG_LENGTH'h0000_0000;\
+	register[1] <= `REG_LENGTH'h0000_0000;\
+	register[2] <= `REG_LENGTH'h0000_0000;\
+	register[3] <= `REG_LENGTH'h0000_0000;\
+	register[4] <= `REG_LENGTH'h0000_0000;\
+	register[5] <= `REG_LENGTH'h0000_0000;\
+	register[6] <= `REG_LENGTH'h0000_0000;\
+	register[7] <= `REG_LENGTH'h0000_0000;\
+	register[8] <= `REG_LENGTH'h0000_0000;\
+	register[9] <= `REG_LENGTH'h0000_0000;\
+	register[10] <= `REG_LENGTH'h0000_0000;\
+	register[11] <= `REG_LENGTH'h0000_0000;\
+	register[12] <= `REG_LENGTH'h0000_0000;\
+	register[13] <= `REG_LENGTH'h0000_0000;\
+	register[14] <= `REG_LENGTH'h0000_0000;\
+	register[15] <= `REG_LENGTH'h0000_0000;\
+	register[16] <= `REG_LENGTH'h0000_0000;\
+	register[17] <= `REG_LENGTH'h0000_0000;\
+	register[18] <= `REG_LENGTH'h0000_0000;\
+	register[19] <= `REG_LENGTH'h0000_0000;\
+	register[20] <= `REG_LENGTH'h0000_0000;\
+	register[21] <= `REG_LENGTH'h0000_0000;\
+	register[22] <= `REG_LENGTH'h0000_0000;\
+	register[23] <= `REG_LENGTH'h0000_0000;\
+	register[24] <= `REG_LENGTH'h0000_0000;\
+	register[25] <= `REG_LENGTH'h0000_0000;\
+	register[26] <= `REG_LENGTH'h0000_0000;\
+	register[27] <= `REG_LENGTH'h0000_0000;\
+	register[28] <= `REG_LENGTH'h0000_0000;\
+	register[29] <= `REG_LENGTH'h0000_0000;\
+	register[30] <= `REG_LENGTH'h0000_0000;\
+	register[31] <= `REG_LENGTH'h0000_0000;
 
 /* ID */
 /* 定义指令inst长度 */

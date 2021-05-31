@@ -1,8 +1,8 @@
 /**
  * @file	RegFile.v
  * @author	LiuChuanXi
- * @date	2021.05.29
- * @version	V4.0
+ * @date	2021.05.31
+ * @version	V4.0-1
  * @brief	MIPS_CPU寄存器堆(RegFile)模块
  * @par	修改日志
  * <table>
@@ -12,6 +12,7 @@
  * <tr><td>2021.05.25	<td>V1.2		<td>LiuChuanXi	<td>整理包含头文件
  * <tr><td>2021.05.27	<td>V3.0		<td>LiuChuanXi	<td>整理格式和注释
  * <tr><td>2021.05.29	<td>V4.0		<td>LiuChuanXi	<td>增加对0号寄存器zero的写禁止
+ * <tr><td>2021.05.31	<td>V4.0-1		<td>LiuChuanXi	<td>添加下板用寄存器初始化
  * </table>
  */
 
@@ -70,8 +71,12 @@ module RegFile(
 		/* 输出零，等价于输出零号寄存器(register[0])的值 */
 		regaData <= {`REG_LENGTH{1'b0}};
 		regbData <= {`REG_LENGTH{1'b0}};
-		/* 读取RegFile.txt初始化所有寄存器的值 */
-		$readmemh("MemFile/RegFile.txt", register);
+		/**
+		 * 仿真用
+		 * 读取RegFile.txt初始化所有寄存器的值
+		 * $readmemh("MemFile/RegFile.txt", register);
+		 */
+		`REG_INIT
 	end
 
 
@@ -82,8 +87,12 @@ module RegFile(
 			/* 输出零，等价于输出零号寄存器(register[0])的值 */
 			regaData = {`REG_LENGTH{1'b0}};
 			regbData = {`REG_LENGTH{1'b0}};
-			/* 读取RegFile.txt初始化所有寄存器的值 */
-			$readmemh("MemFile/RegFile.txt", register);
+			/**
+			* 仿真用
+			* 读取RegFile.txt初始化所有寄存器的值
+			* $readmemh("MemFile/RegFile.txt", register);
+			*/
+			`REG_INIT
 		end
 	end
 
