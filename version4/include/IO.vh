@@ -1,13 +1,14 @@
 /**
  * @file	IO.vh
  * @author	LiuChuanXi
- * @date	2021.05.29
- * @version	V4.0
+ * @date	2021.05.31
+ * @version	V4.0-1
  * @brief	输入输出IO模块的宏定义
  * @par	修改日志
  * <table>
  * <tr><th>Date			<th>Version		<th>Author		<th>Description
  * <tr><td>2021.05.29	<td>V4.0		<td>LiuChuanXi	<td>创建初始版本
+ * <tr><td>2021.05.31	<td>V4.0-1		<td>LiuChuanXi	<td>添加有关GPIO的地址映射
  * </table>
  */
 
@@ -34,6 +35,12 @@
 `define ENABLE	1'b1	//使能
 `define DISABLE	1'b0	//关闭
 `endif
+
+/* IO Device Address */
+/* GPIO */
+`define GPIO_CR_ADDR	(`LEN_ADDR_IO'h0000_0400)	//GPIO输入/输出配置寄存器
+`define GPIO_OR_ADDR	(`LEN_ADDR_IO'h0000_0404)	//GPIO输出寄存器
+`define GPIO_IR_ADDR	(`LEN_ADDR_IO'h0000_0408)	//GPIO输入寄存器
 
 
 `endif //__IO_H
