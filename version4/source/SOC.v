@@ -22,11 +22,17 @@
 /**
  * @author	LiuChuanXi
  * @brief	MIPS CPU最顶层SOC模块
+ * @note	---SOC---
  * @param	clk			input，时钟信号
  * @param	rst			input，复位信号
+ * @note	---GPIO---
+ * @param	GPIO_CR		output，GPIO配置寄存器，当前版本留空
+ * @param	GPIO_OR		output，GPIO输出寄存器
+ * @param	GPIO_IR		input， GPIO输入寄存器
  */
 module SOC(
-	clk, rst
+	clk, rst,
+	GPIO_CR, GPIO_OR, GPIO_IR
 );
 
 	/* input */
@@ -34,6 +40,10 @@ module SOC(
 	input wire rst;						//复位信号
 
 	/* output */
+	/* GPIO */
+	output wire[`LEN_DATA_IO-1:0] GPIO_CR;	//GPIO配置寄存器，当前版本留空
+	output wire[`LEN_DATA_IO-1:0] GPIO_OR;	//GPIO输出寄存器
+	input  wire[`LEN_DATA_IO-1:0] GPIO_IR;	//GPIO输入寄存器
 
 	/* private */
 	/* MIPS InstMem */
@@ -83,7 +93,8 @@ module SOC(
 	IO io_m(
 		.clk(clk), .rst(rst),
 		.ce(ioCe), .we(ioWe), .wtData(ioWtData), .addr(ioAddr),
-		.rdData(ioRdData)
+		.rdData(ioRdData),
+		.GPIO_CR(GPIO_CR), .GPIO_OR(GPIO_OR), .GPIO_IR(GPIO_IR)
 	);
 
 
