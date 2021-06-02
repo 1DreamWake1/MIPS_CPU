@@ -2,12 +2,13 @@
  * @file	HILO.vh
  * @author	LiuChuanXi
  * @date	2021.06.02
- * @version	V5.0
+ * @version	V5.1
  * @brief	MIPS_CPU hi、lo寄存器模块
  * @par	修改日志
  * <table>
  * <tr><th>Date			<th>Version		<th>Author		<th>Description
  * <tr><td>2021.06.02	<td>V5.0		<td>LiuChuanXi	<td>创建初始版本
+ * <tr><td>2021.06.02	<td>V5.1		<td>LiuChuanXi	<td>修改写回操作为clk上升沿
  * </table>
  */
 
@@ -82,7 +83,7 @@ module HILO(
 
 
 	/* 写操作，时序逻辑 */
-	always@(clk) begin
+	always@(posedge clk) begin
 		/* hi_reg */
 		if((rst == `DISABLE) && (hiWtCe == `ENABLE)) begin
 			hi_reg <= hiWtData;
