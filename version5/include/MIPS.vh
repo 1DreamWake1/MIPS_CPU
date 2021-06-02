@@ -1,8 +1,8 @@
 /**
  * @file	MIPS.vh
  * @author	LiuChuanXi
- * @date	2021.05.29
- * @version	V4.0
+ * @date	2021.06.02
+ * @version	V5.0
  * @brief	MIPS所需宏定义文件
  * @par	修改日志
  * <table>
@@ -11,6 +11,7 @@
  * <tr><td>2021.05.26	<td>V2.0		<td>LiuChuanXi	<td>开始Version2
  * <tr><td>2021.05.28	<td>V3.0		<td>LiuChuanXi	<td>开始version3，增加了对PC初始值(复位值)的宏定义
  * <tr><td>2021.05.29	<td>V4.0		<td>LiuChuanXi	<td>开始version4，增加对空指令nop的支持
+ * <tr><td>2021.06.02	<td>V5.0		<td>LiuChuanXi	<td>开始version5，增加对hilo类型12条整数指令的支持
  * </table>
  */
 
@@ -49,8 +50,11 @@
 /* 定义指令inst长度 */
 `define INST_LENGTH	32
 /* 定义指令中OP段的长度 */
-`define OP_LENGTH 6
+`define OP_LENGTH 7
+
+
 /* 定义指令的编码 */
+/* 基本32条整数指令 */
 `define CMD_NOP		{`OP_LENGTH{1'b0}}
 `define CMD_ADD		(`CMD_NOP + `OP_LENGTH'h01)
 `define CMD_SUB		(`CMD_NOP + `OP_LENGTH'h02)
@@ -72,6 +76,19 @@
 `define CMD_LUI		(`CMD_NOP + `OP_LENGTH'h12)
 `define CMD_J		(`CMD_NOP + `OP_LENGTH'h13)
 `define CMD_JAL		(`CMD_NOP + `OP_LENGTH'h14)
+/* hilo的12条整数指令 */
+`define CMD_SLT		(`CMD_NOP + `OP_LENGTH'h15)
+`define CMD_BGTZ	(`CMD_NOP + `OP_LENGTH'h16)
+`define CMD_BLTZ	(`CMD_NOP + `OP_LENGTH'h17)
+`define CMD_JALR	(`CMD_NOP + `OP_LENGTH'h18)
+`define CMD_MULT	(`CMD_NOP + `OP_LENGTH'h19)
+`define CMD_MULTU	(`CMD_NOP + `OP_LENGTH'h1A)
+`define CMD_DIV		(`CMD_NOP + `OP_LENGTH'h1B)
+`define CMD_DIVU	(`CMD_NOP + `OP_LENGTH'h1C)
+`define CMD_MFHI	(`CMD_NOP + `OP_LENGTH'h1D)
+`define CMD_MFLO	(`CMD_NOP + `OP_LENGTH'h1E)
+`define CMD_MTHI	(`CMD_NOP + `OP_LENGTH'h1F)
+`define CMD_MTLO	(`CMD_NOP + `OP_LENGTH'h20)
 
 
 `endif //__MIPS_H
