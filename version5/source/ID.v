@@ -929,7 +929,7 @@ module ID(
 
 	/**
 	 * instructions		SLT
-	 * type				HILO
+	 * type				R
 	 * detail			rd <- (rs < rt)
 	 * inst[31:26]	==	6'b000000
 	 * inst[25:21]	==	rs
@@ -963,5 +963,76 @@ module ID(
 			loRdCe <= `DISABLE;
 		end
 	end
+
+	/**
+	 * instructions		BGTZ
+	 * type				J
+	 * detail			if(rs > 0) then branch
+	 * inst[31:26]	==	6'b000111
+	 * inst[25:21]	==	rs
+	 * inst[20:16]	==	5'b00000
+	 * inst[15:0]	==	offset
+	 */
+	always@(*) begin
+		/* 复位信号rst无效 */
+		if((rst == `DISABLE) && (inst[31:26] == 6'b000111) && (inst[20:16] == 5'b00000)) begin
+			/* op传递CMD操作码 */
+			op <= `CMD_BGTZ;
+			/* a读使能信号，与地址 */
+			regaRd <= `ENABLE;
+			regaAddr <= inst[25:21];
+			/* b读使能信号，与地址 */
+			regbRd <= `DISABLE;
+			regbAddr <= {`REG_ADDR_LEN{1'b0}};
+			/* c写使能信号，与地址 */
+			regcWr <= `DISABLE;
+			regcAddr <= {`REG_ADDR_LEN{1'b0}};
+			/* 寄存器a和b数据输出 */
+			regaData <= {`REG_LENGTH{1'b0}};
+			regbData <= {`REG_LENGTH{1'b0}};
+			/* 跳转指令功能 */
+			jAddr <= {{14{inst[15]}}, inst[16:0], 2'b00};
+			jCe <= ((regaData_i[`REG_LENGTH-1] == 1'b0) && (regaData_i != {`REG_LENGTH{1'b0}})) ? `ENABLE : `DISABLE;
+			/*HILO*/
+			hiRdCe <= `DISABLE;
+			loRdCe <= `DISABLE;
+		end
+	end
+
+	/**
+	 * instructions		BLTZ
+	 * type				J
+	 * detail			if(rs < 0) then branch
+	 * inst[31:26]	==	6'b000001
+	 * inst[25:21]	==	rs
+	 * inst[20:16]	==	5'b00000
+	 * inst[15:0]	==	offset
+	 */
+	always@(*) begin
+		/* 复位信号rst无效 */
+		if((rst == `DISABLE) && (inst[31:26] == 6'b000001) && (inst[20:16] == 5'b00000)) begin
+			/* op传递CMD操作码 */
+			op <= `CMD_BLTZ;
+			/* a读使能信号，与地址 */
+			regaRd <= `ENABLE;
+			regaAddr <= inst[25:21];
+			/* b读使能信号，与地址 */
+			regbRd <= `DISABLE;
+			regbAddr <= {`REG_ADDR_LEN{1'b0}};
+			/* c写使能信号，与地址 */
+			regcWr <= `DISABLE;
+			regcAddr <= {`REG_ADDR_LEN{1'b0}};
+			/* 寄存器a和b数据输出 */
+			regaData <= {`REG_LENGTH{1'b0}};
+			regbData <= {`REG_LENGTH{1'b0}};
+			/* 跳转指令功能 */
+			jAddr <= {{14{inst[15]}}, inst[16:0], 2'b00};
+			jCe <= ((regaData_i[`REG_LENGTH-1] == 1'b1) && (regaData_i != {`REG_LENGTH{1'b0}})) ? `ENABLE : `DISABLE;
+			/*HILO*/
+			hiRdCe <= `DISABLE;
+			loRdCe <= `DISABLE;
+		end
+	end
+
 
 endmodule //module ID
