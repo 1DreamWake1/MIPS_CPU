@@ -1,8 +1,8 @@
 /**
  * @file	test_bench.v
  * @author	LiuChuanXi
- * @date	2021.05.29
- * @version	V4.0
+ * @date	2021.06.02
+ * @version	V6.0
  * @brief	MIPS_CPU顶层测试模块
  * @par	修改日志
  * <table>
@@ -10,6 +10,7 @@
  * <tr><td>2021.04.28	<td>V1.0		<td>LiuChuanXi	<td>创建初始版本
  * <tr><td>2021.05.25	<td>V1.1		<td>LiuChuanXi	<td>整理包含头文件
  * <tr><td>2021.05.29	<td>V4.0		<td>LiuChuanXi	<td>修改仿真时间为2000个单位
+ * <tr><td>2021.06.02	<td>V6.0		<td>LiuChuanXi	<td>开始version6,添加GPIO模块
  * </table>
  */
 
@@ -30,9 +31,14 @@ module test_bench();
 	reg clk;			//始终信号
 	reg rst;			//复位信号
 
+	/* GPIO */
+	wire[31:0] GPIO_OUT;
+	reg[31:0] GPIO_IN = 32'h0000_0000;
+
 	/* module */
 	SOC soc_m(
-		.clk(clk), .rst(rst)
+		.clk(clk), .rst(rst),
+		.GPIO_IN(GPIO_IN), .GPIO_OUT(GPIO_OUT)
 	);
 
 
@@ -47,6 +53,7 @@ module test_bench();
 	/* 产生时钟信号clk */
 	always begin
 		#5 clk = ~clk;
+		GPIO_IN = GPIO_IN + 32'h1;
 	end
 
 
