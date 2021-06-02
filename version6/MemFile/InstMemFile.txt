@@ -2,7 +2,7 @@
  * @file	InstMemFile.txt
  * @author	LiuChuanXi
  * @date	2021.06.02
- * @version	V5.1
+ * @version	V6.1
  * @brief	指令只读存储器ROM，属于InstMem模块，以十六进制存放指令
  * @par	修改日志
  * <table>
@@ -17,23 +17,23 @@
  * <tr><td>2021.05.30	<td>V4.1		<td>LiuChuanXi	<td>version4测试完成
  * <tr><td>2021.06.02	<td>V5.0		<td>LiuChuanXi	<td>version5
  * <tr><td>2021.06.02	<td>V5.1		<td>LiuChuanXi	<td>version5测试完成
+ * <tr><td>2021.06.02	<td>V6.0		<td>LiuChuanXi	<td>version5
+ * <tr><td>2021.06.02	<td>V6.1		<td>LiuChuanXi	<td>version5测试完成
  * </table>
  */
 
 
 /* 程序入口，0号地址单元 */
 @0000
-3c 08 ff ff		//  lui $8, -1               ; 11: lui $t0, 0xFFFF 
-35 08 ff ff		//  ori $8, $8, -1           ; 12: ori $t0, $t0, 0xFFFF 
-3c 09 aa aa		//  lui $9, -21846           ; 13: lui $t1, 0xAAAA 
-35 29 aa aa		//  ori $9, $9, -21846       ; 14: ori $t1, $t1, 0xAAAA 
-01 00 00 11		//  mthi $8                  ; 16: mthi $t0 
-01 20 00 13		//  mtlo $9                  ; 17: mtlo $t1 
-00 00 50 10		//  mfhi $10                 ; 18: mfhi $t2 
-00 00 58 12		//  mflo $11                 ; 19: mflo $t3 
-ac 0a 00 00		//  sw $10, 0($0)            ; 20: sw $t2, 0x0000($zero) 
-ac 0b 00 04		//  sw $11, 4($0)            ; 21: sw $t3, 0x0004($zero) 
-08 10 00 0a		//  j 0x00400028 [end]       ; 24: j end #死循环，程序结束 
+8c 08 04 08			//  lw $8, 1032($0)          ; 11: lw $t0, 0x0408($zero) #读入数据 
+8c 08 04 08			//  lw $8, 1032($0)          ; 12: lw $t0, 0x0408($zero) #读入数据 
+3c 09 ff ff			//  lui $9, -1               ; 13: lui $t1, 0xFFFF 
+35 29 ff ff			//  ori $9, $9, -1           ; 14: ori $t1, $t1, 0xFFFF 
+ac 09 04 00			//  sw $9, 1024($0)          ; 15: sw $t1, 0x0400($zero) #全部输出 
+3c 0a ab ab			//  lui $10, -21589          ; 16: lui $t2, 0xABAB 
+35 4a cd cd			//  ori $10, $10, -12851     ; 17: ori $t2, $t2, 0xCDCD 
+ac 0a 04 04			//  sw $10, 1028($0)         ; 18: sw $t2, 0x0404($zero) #输出 
+08 10 00 08			//  j 0x00400020 [end]       ; 21: j end #死循环，程序结束 
 
 
 /* pc初始值对应的地址空间，使用空指令NOP */
