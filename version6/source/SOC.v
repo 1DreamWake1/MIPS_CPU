@@ -1,8 +1,8 @@
 /**
  * @file	SOC.v
  * @author	LiuChuanXi
- * @date	2021.05.29
- * @version	V4.1
+ * @date	2021.06.02
+ * @version	V6.0
  * @brief	MIPS CPU顶层SOC
  * @par	修改日志
  * <table>
@@ -12,6 +12,7 @@
  * <tr><td>2021.05.27	<td>V3.1		<td>LiuChuanXi	<td>DataMem(RAM)模块连线成功
  * <tr><td>2021.05.29	<td>V4.0		<td>LiuChuanXi	<td>修改包含关系
  * <tr><td>2021.05.29	<td>V4.1		<td>LiuChuanXi	<td>添加RAM和IO访问控制模块MIOC
+ * <tr><td>2021.06.02	<td>V6.0		<td>LiuChuanXi	<td>开始version6,添加GPIO模块
  * </table>
  */
 
@@ -22,18 +23,25 @@
 /**
  * @author	LiuChuanXi
  * @brief	MIPS CPU最顶层SOC模块
+ * @note	---SOC---
  * @param	clk			input，时钟信号
  * @param	rst			input，复位信号
+ * @note	---GPIO---
+ * @param	GPIO_IN		input，GPIO输入信号
+ * @param	GPIO_OUT	output，GPIO输出信号
  */
 module SOC(
-	clk, rst
+	clk, rst,
+	GPIO_IN, GPIO_OUT
 );
 
-	/* input */
+	/* SOC */
 	input wire clk;						//时钟信号
 	input wire rst;						//复位信号
 
-	/* output */
+	/* GPIO */
+	input wire[`REG_LENGTH-1:0] GPIO_IN;	//GPIO输入数据
+	output wire[`REG_LENGTH-1:0] GPIO_OUT;	//GPIO输出数据
 
 	/* private */
 	/* MIPS InstMem */
@@ -58,6 +66,10 @@ module SOC(
 	wire[`REG_LENGTH-1:0] ioAddr;		//MIOC->IO(register)，IO(register)的地址输出
 	wire[`REG_LENGTH-1:0] ioWtData;		//MIOC->IO(register)，IO(register)的数据输出
 	wire[`REG_LENGTH-1:0] ioRdData;		//IO(register)->MIOC，IO(register)的数据读出
+	/* IO GPIO */
+	wire[`REG_LENGTH-1:0] GPIO_CR;		//IO->GPIO，GPIO输入输出方向控制
+	wire[`REG_LENGTH-1:0] GPIO_OR;		//IO->GPIO，GPIO数据输出
+	wire[`REG_LENGTH-1:0] GPIO_IR;		//IO->GPIO，GPIO数据输入
 
 
 	/* module */
@@ -82,8 +94,13 @@ module SOC(
 	);
 	IO io_m(
 		.clk(clk), .rst(rst),
-		.ce(ioCe), .we(ioWe), .wtData(ioWtData), .addr(ioAddr),
-		.rdData(ioRdData)
+		.ce(ioCe), .we(ioWe), .wtData(ioWtData), .addr(ioAddr), .rdData(ioRdData),
+		.GPIO_CR(GPIO_CR), .GPIO_OR(GPIO_OR), .GPIO_IR(GPIO_IR)
+	);
+	GPIO gpio_m(
+		.rst(rst),
+		.GPIO_CR(GPIO_CR), .GPIO_OR(GPIO_OR), .GPIO_IR(GPIO_IR),
+		.GPIO_IN(GPIO_IN), .GPIO_OUT(GPIO_OUT)
 	);
 
 
