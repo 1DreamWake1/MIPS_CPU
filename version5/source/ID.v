@@ -2,7 +2,7 @@
  * @file	ID.vh
  * @author	LiuChuanXi
  * @date	2021.06.02
- * @version	V5.2
+ * @version	V5.3
  * @brief	MIPS_CPU指令译码ID模块
  * @par	修改日志
  * <table>
@@ -19,6 +19,7 @@
  * <tr><td>2021.06.02	<td>V5.0		<td>LiuChuanXi	<td>开始version5，更改注释和变量框架
  * <tr><td>2021.06.02	<td>V5.1		<td>LiuChuanXi	<td>添加有关HILO模块内容，未添加有关hilo指令的支持
  * <tr><td>2021.06.02	<td>V5.2		<td>LiuChuanXi	<td>添加有关hilo指令的支持
+ * <tr><td>2021.06.02	<td>V5.3		<td>LiuChuanXi	<td>添加MIPS12条整数指令完成
  * </table>
  */
 
@@ -1204,6 +1205,142 @@ module ID(
 			/* 寄存器a和b数据输出 */
 			regaData <= regaData_i;
 			regbData <= regbData_i;
+			/* 跳转指令功能 */
+			jAddr <= `PC_NULL;
+			jCe <= `DISABLE;
+			/*HILO*/
+			hiRdCe <= `DISABLE;
+			loRdCe <= `DISABLE;
+		end
+	end
+
+	/**
+	 * instructions		MFHI
+	 * type				hilo
+	 * detail			rd <- hi
+	 * inst[31:16]	==	16'b0000_0000_0000_0000
+	 * inst[15:11]	==	rd
+	 * inst[10:0]	==	11'b000_0001_0000
+	 */
+	always@(*) begin
+		/* 复位信号rst无效 */
+		if((rst == `DISABLE) && (inst[31:16] == 16'b0000_0000_0000_0000) && (inst[10:0] == 11'b000_0001_0000)) begin
+			/* op传递CMD操作码 */
+			op <= `CMD_MFHI;
+			/* a读使能信号，与地址 */
+			regaRd <= `DISABLE;
+			regaAddr <= {`REG_ADDR_LEN{1'b0}};
+			/* b读使能信号，与地址 */
+			regbRd <= `DISABLE;
+			regbAddr <= {`REG_ADDR_LEN{1'b0}};
+			/* c写使能信号，与地址 */
+			regcWr <= `ENABLE;
+			regcAddr <= inst[15:11];
+			/* 寄存器a和b数据输出 */
+			regaData <= hiRdData;
+			regbData <= {`REG_LENGTH{1'b0}};
+			/* 跳转指令功能 */
+			jAddr <= `PC_NULL;
+			jCe <= `DISABLE;
+			/*HILO*/
+			hiRdCe <= `ENABLE;
+			loRdCe <= `DISABLE;
+		end
+	end
+
+	/**
+	 * instructions		MFLO
+	 * type				hilo
+	 * detail			rd <- lo
+	 * inst[31:16]	==	16'b0000_0000_0000_0000
+	 * inst[15:11]	==	rd
+	 * inst[10:0]	==	11'b000_0001_0010
+	 */
+	always@(*) begin
+		/* 复位信号rst无效 */
+		if((rst == `DISABLE) && (inst[31:16] == 16'b0000_0000_0000_0000) && (inst[10:0] == 11'b000_0001_0010)) begin
+			/* op传递CMD操作码 */
+			op <= `CMD_MFLO;
+			/* a读使能信号，与地址 */
+			regaRd <= `DISABLE;
+			regaAddr <= {`REG_ADDR_LEN{1'b0}};
+			/* b读使能信号，与地址 */
+			regbRd <= `DISABLE;
+			regbAddr <= {`REG_ADDR_LEN{1'b0}};
+			/* c写使能信号，与地址 */
+			regcWr <= `ENABLE;
+			regcAddr <= inst[15:11];
+			/* 寄存器a和b数据输出 */
+			regaData <= loRdData;
+			regbData <= {`REG_LENGTH{1'b0}};
+			/* 跳转指令功能 */
+			jAddr <= `PC_NULL;
+			jCe <= `DISABLE;
+			/*HILO*/
+			hiRdCe <= `DISABLE;
+			loRdCe <= `ENABLE;
+		end
+	end
+
+	/**
+	 * instructions		MTHI
+	 * type				hilo
+	 * detail			hi <- rs
+	 * inst[31:26]	==	6'b000000
+	 * inst[25:21]	==	rs
+	 * inst[20:0]	==	21'b0_0000_0000_0000_0001_0001
+	 */
+	always@(*) begin
+		/* 复位信号rst无效 */
+		if((rst == `DISABLE) && (inst[31:26] == 6'b000000) && (inst[20:0] == 21'b0_0000_0000_0000_0001_0001)) begin
+			/* op传递CMD操作码 */
+			op <= `CMD_MTHI;
+			/* a读使能信号，与地址 */
+			regaRd <= `ENABLE;
+			regaAddr <= inst[25:21];
+			/* b读使能信号，与地址 */
+			regbRd <= `DISABLE;
+			regbAddr <= {`REG_ADDR_LEN{1'b0}};
+			/* c写使能信号，与地址 */
+			regcWr <= `DISABLE;
+			regcAddr <= {`REG_ADDR_LEN{1'b0}};
+			/* 寄存器a和b数据输出 */
+			regaData <= regaData_i;
+			regbData <= {`REG_LENGTH{1'b0}};
+			/* 跳转指令功能 */
+			jAddr <= `PC_NULL;
+			jCe <= `DISABLE;
+			/*HILO*/
+			hiRdCe <= `DISABLE;
+			loRdCe <= `DISABLE;
+		end
+	end
+
+	/**
+	 * instructions		MTLO
+	 * type				hilo
+	 * detail			lo <- rs
+	 * inst[31:26]	==	6'b000000
+	 * inst[25:21]	==	rs
+	 * inst[20:0]	==	21'b0_0000_0000_0000_0001_0011
+	 */
+	always@(*) begin
+		/* 复位信号rst无效 */
+		if((rst == `DISABLE) && (inst[31:26] == 6'b000000) && (inst[20:0] == 21'b0_0000_0000_0000_0001_0011)) begin
+			/* op传递CMD操作码 */
+			op <= `CMD_MTLO;
+			/* a读使能信号，与地址 */
+			regaRd <= `ENABLE;
+			regaAddr <= inst[25:21];
+			/* b读使能信号，与地址 */
+			regbRd <= `DISABLE;
+			regbAddr <= {`REG_ADDR_LEN{1'b0}};
+			/* c写使能信号，与地址 */
+			regcWr <= `DISABLE;
+			regcAddr <= {`REG_ADDR_LEN{1'b0}};
+			/* 寄存器a和b数据输出 */
+			regaData <= regaData_i;
+			regbData <= {`REG_LENGTH{1'b0}};
 			/* 跳转指令功能 */
 			jAddr <= `PC_NULL;
 			jCe <= `DISABLE;

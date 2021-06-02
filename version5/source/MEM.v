@@ -2,7 +2,7 @@
  * @file	MEM.v
  * @author	LiuChuanXi
  * @date	2021.06.02
- * @version	V5.2
+ * @version	V5.3
  * @brief	内存管理模块，用于区分操作寄存器堆还是内存模块
  * @par	修改日志
  * <table>
@@ -13,6 +13,7 @@
  * <tr><td>2021.06.02	<td>V5.0		<td>LiuChuanXi	<td>开始version5，更改注释和变量框架
  * <tr><td>2021.06.02	<td>V5.1		<td>LiuChuanXi	<td>添加有关HILO模块内容，未添加有关hilo指令的支持
  * <tr><td>2021.06.02	<td>V5.2		<td>LiuChuanXi	<td>开始version5，添加有关hilo指令的支持
+ * <tr><td>2021.06.02	<td>V5.3		<td>LiuChuanXi	<td>添加MIPS12条整数指令完成
  * </table>
  */
 
@@ -599,6 +600,70 @@ module MEM(
 				loWtCe <= `ENABLE;
 				hiWtData <= regcData;
 				loWtData <= memData_i;
+			end
+			`CMD_MFHI: begin
+				/* 寄存器部分 */
+				regData <= regcData;
+				regAddr <= regcAddr;
+				regWr <= regcWr;
+				/* 非寄存器模块(RAM或IO) */
+				memAddr <= memAddr_i;
+				wtData <= memData_i;
+				memWr <= `DISABLE;
+				memCe <= `DISABLE;
+				/* HILO */
+				hiWtCe <= `DISABLE;
+				loWtCe <= `DISABLE;
+				hiWtData <= {`REG_LENGTH{1'b0}};
+				loWtData <= {`REG_LENGTH{1'b0}};
+			end
+			`CMD_MFLO: begin
+				/* 寄存器部分 */
+				regData <= regcData;
+				regAddr <= regcAddr;
+				regWr <= regcWr;
+				/* 非寄存器模块(RAM或IO) */
+				memAddr <= memAddr_i;
+				wtData <= memData_i;
+				memWr <= `DISABLE;
+				memCe <= `DISABLE;
+				/* HILO */
+				hiWtCe <= `DISABLE;
+				loWtCe <= `DISABLE;
+				hiWtData <= {`REG_LENGTH{1'b0}};
+				loWtData <= {`REG_LENGTH{1'b0}};
+			end
+			`CMD_MTHI: begin
+				/* 寄存器部分 */
+				regData <= regcData;
+				regAddr <= regcAddr;
+				regWr <= regcWr;
+				/* 非寄存器模块(RAM或IO) */
+				memAddr <= memAddr_i;
+				wtData <= memData_i;
+				memWr <= `DISABLE;
+				memCe <= `DISABLE;
+				/* HILO */
+				hiWtCe <= `ENABLE;
+				loWtCe <= `DISABLE;
+				hiWtData <= regcData;
+				loWtData <= {`REG_LENGTH{1'b0}};
+			end
+			`CMD_MTLO: begin
+				/* 寄存器部分 */
+				regData <= regcData;
+				regAddr <= regcAddr;
+				regWr <= regcWr;
+				/* 非寄存器模块(RAM或IO) */
+				memAddr <= memAddr_i;
+				wtData <= memData_i;
+				memWr <= `DISABLE;
+				memCe <= `DISABLE;
+				/* HILO */
+				hiWtCe <= `DISABLE;
+				loWtCe <= `ENABLE;
+				hiWtData <= {`REG_LENGTH{1'b0}};
+				loWtData <= regcData;
 			end
 			default: begin
 				/* 寄存器部分 */

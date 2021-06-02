@@ -2,7 +2,7 @@
  * @file	EX.v
  * @author	LiuChuanXi
  * @date	2021.06.02
- * @version	V5.0
+ * @version	V5.1
  * @brief	MIPS_CPU执行模块EX
  * @par	修改日志
  * <table>
@@ -16,6 +16,7 @@
  * <tr><td>2021.05.26	<td>V3.1		<td>LiuChuanXi	<td>修改与MEM模块端口的名称加上"_i"
  * <tr><td>2021.05.29	<td>V4.0		<td>LiuChuanXi	<td>开始Version4，增加对空指令nop的支持
  * <tr><td>2021.06.02	<td>V5.0		<td>LiuChuanXi	<td>开始version5，添加有关hilo指令的支持
+ * <tr><td>2021.06.02	<td>V5.1		<td>LiuChuanXi	<td>添加MIPS12条整数指令完成
  * </table>
  */
 
@@ -390,16 +391,6 @@ module EX(
 					memAddr_i <= {`REG_LENGTH{1'b0}};
 					/* memData_i <= {`REG_LENGTH{1'b0}}; */
 				end
-				default: begin
-					/* 输出全零 */
-					regcData <= {`REG_LENGTH{1'b0}};
-					regcWr <= `DISABLE;
-					regcAddr <= {`REG_ADDR_LEN{1'b0}};
-					/* 非寄存器部分(RAM或IO) */
-					op <= op_i;
-					memAddr_i <= {`REG_LENGTH{1'b0}};
-					memData_i <= {`REG_LENGTH{1'b0}};
-				end
 				`CMD_DIV: begin
 			 		/* 寄存器部分 */
 					/* 乘法计算结果由寄存器数据线和内存数据线拼接传送 */
@@ -440,6 +431,56 @@ module EX(
 					op <= op_i;
 					memAddr_i <= {`REG_LENGTH{1'b0}};
 					/* memData_i <= {`REG_LENGTH{1'b0}}; */
+				end
+				`CMD_MFHI: begin
+			 		/* 寄存器部分 */
+					regcData <= regaData;
+					regcWr <= regcWr_i;
+					regcAddr <= regcAddr_i;
+					/* 非寄存器部分(RAM或IO) */
+					op <= op_i;
+					memAddr_i <= {`REG_LENGTH{1'b0}};
+					memData_i <= {`REG_LENGTH{1'b0}};
+				end
+				`CMD_MFLO: begin
+			 		/* 寄存器部分 */
+					regcData <= regaData;
+					regcWr <= regcWr_i;
+					regcAddr <= regcAddr_i;
+					/* 非寄存器部分(RAM或IO) */
+					op <= op_i;
+					memAddr_i <= {`REG_LENGTH{1'b0}};
+					memData_i <= {`REG_LENGTH{1'b0}};
+				end
+				`CMD_MTHI: begin
+			 		/* 寄存器部分 */
+					regcData <= regaData;
+					regcWr <= regcWr_i;
+					regcAddr <= regcAddr_i;
+					/* 非寄存器部分(RAM或IO) */
+					op <= op_i;
+					memAddr_i <= {`REG_LENGTH{1'b0}};
+					memData_i <= {`REG_LENGTH{1'b0}};
+				end
+				`CMD_MTLO: begin
+			 		/* 寄存器部分 */
+					regcData <= regaData;
+					regcWr <= regcWr_i;
+					regcAddr <= regcAddr_i;
+					/* 非寄存器部分(RAM或IO) */
+					op <= op_i;
+					memAddr_i <= {`REG_LENGTH{1'b0}};
+					memData_i <= {`REG_LENGTH{1'b0}};
+				end
+				default: begin
+					/* 输出全零 */
+					regcData <= {`REG_LENGTH{1'b0}};
+					regcWr <= `DISABLE;
+					regcAddr <= {`REG_ADDR_LEN{1'b0}};
+					/* 非寄存器部分(RAM或IO) */
+					op <= op_i;
+					memAddr_i <= {`REG_LENGTH{1'b0}};
+					memData_i <= {`REG_LENGTH{1'b0}};
 				end
 			endcase
 		end
