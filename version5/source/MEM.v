@@ -2,7 +2,7 @@
  * @file	MEM.v
  * @author	LiuChuanXi
  * @date	2021.06.02
- * @version	V5.1
+ * @version	V5.2
  * @brief	内存管理模块，用于区分操作寄存器堆还是内存模块
  * @par	修改日志
  * <table>
@@ -12,6 +12,7 @@
  * <tr><td>2021.05.29	<td>V4.0		<td>LiuChuanXi	<td>开始Version4，增加对空指令nop的支持
  * <tr><td>2021.06.02	<td>V5.0		<td>LiuChuanXi	<td>开始version5，更改注释和变量框架
  * <tr><td>2021.06.02	<td>V5.1		<td>LiuChuanXi	<td>添加有关HILO模块内容，未添加有关hilo指令的支持
+ * <tr><td>2021.06.02	<td>V5.2		<td>LiuChuanXi	<td>开始version5，添加有关hilo指令的支持
  * </table>
  */
 
@@ -456,6 +457,22 @@ module MEM(
 				loWtData <= {`REG_LENGTH{1'b0}};
 			end
 			`CMD_JAL: begin
+				/* 寄存器部分 */
+				regData <= regcData;
+				regAddr <= regcAddr;
+				regWr <= regcWr;
+				/* 非寄存器模块(RAM或IO) */
+				memAddr <= memAddr_i;
+				wtData <= memData_i;
+				memWr <= `DISABLE;
+				memCe <= `DISABLE;
+				/* HILO */
+				hiWtCe <= `DISABLE;
+				loWtCe <= `DISABLE;
+				hiWtData <= {`REG_LENGTH{1'b0}};
+				loWtData <= {`REG_LENGTH{1'b0}};
+			end
+			`CMD_SLT: begin
 				/* 寄存器部分 */
 				regData <= regcData;
 				regAddr <= regcAddr;

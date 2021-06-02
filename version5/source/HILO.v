@@ -51,8 +51,8 @@ module HILO(
 	/* MEM */
 	input wire hiWtCe;							//hi寄存器写使能信号
 	input wire loWtCe;							//lo寄存器写使能信号
-	input wire hiWtData;						//hi寄存器所写数据
-	input wire loWtData;						//lo寄存器所写数据
+	input wire[`REG_LENGTH-1:0] hiWtData;		//hi寄存器所写数据
+	input wire[`REG_LENGTH-1:0] loWtData;		//lo寄存器所写数据
 
 	/* private */
 	reg[`REG_LENGTH-1:0] hi_reg;				//hi寄存器

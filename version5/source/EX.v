@@ -1,8 +1,8 @@
 /**
  * @file	EX.v
  * @author	LiuChuanXi
- * @date	2021.05.29
- * @version	V4.0
+ * @date	2021.06.02
+ * @version	V5.0
  * @brief	MIPS_CPU执行模块EX
  * @par	修改日志
  * <table>
@@ -15,6 +15,7 @@
  * <tr><td>2021.05.26	<td>V3.0		<td>LiuChuanXi	<td>version3开始，增加与MEM间的三根线
  * <tr><td>2021.05.26	<td>V3.1		<td>LiuChuanXi	<td>修改与MEM模块端口的名称加上"_i"
  * <tr><td>2021.05.29	<td>V4.0		<td>LiuChuanXi	<td>开始Version4，增加对空指令nop的支持
+ * <tr><td>2021.06.02	<td>V5.0		<td>LiuChuanXi	<td>开始version5，添加有关hilo指令的支持
  * </table>
  */
 
@@ -305,6 +306,22 @@ module EX(
 				`CMD_JAL: begin
 			 		/* 寄存器部分 */
 					regcData <= regaData;
+					regcWr <= regcWr_i;
+					regcAddr <= regcAddr_i;
+					/* 非寄存器部分(RAM或IO) */
+					op <= op_i;
+					memAddr_i <= {`REG_LENGTH{1'b0}};
+					memData_i <= {`REG_LENGTH{1'b0}};
+				end
+				`CMD_SLT: begin
+					/* 寄存器部分 */
+					if(regaData[`REG_LENGTH-1] == regbData[`REG_LENGTH-1]) begin
+						/* ((a>=0) && (b>=0)) || ((a<0) && (b<0)) */
+						regcData <= (regaData < regbData) ? `REG_LENGTH'h0000_0001 : `REG_LENGTH'h0000_0000;
+					end
+					else begin
+						regcData <= (regaData[`REG_LENGTH-1] == 1'b1) ? `REG_LENGTH'h0000_0001 : `REG_LENGTH'h0000_0000;
+					end
 					regcWr <= regcWr_i;
 					regcAddr <= regcAddr_i;
 					/* 非寄存器部分(RAM或IO) */

@@ -2,7 +2,7 @@
  * @file	ID.vh
  * @author	LiuChuanXi
  * @date	2021.06.02
- * @version	V5.1
+ * @version	V5.2
  * @brief	MIPS_CPU指令译码ID模块
  * @par	修改日志
  * <table>
@@ -18,6 +18,7 @@
  * <tr><td>2021.05.29	<td>V4.0		<td>LiuChuanXi	<td>开始version4，增加对空指令nop的支持
  * <tr><td>2021.06.02	<td>V5.0		<td>LiuChuanXi	<td>开始version5，更改注释和变量框架
  * <tr><td>2021.06.02	<td>V5.1		<td>LiuChuanXi	<td>添加有关HILO模块内容，未添加有关hilo指令的支持
+ * <tr><td>2021.06.02	<td>V5.2		<td>LiuChuanXi	<td>添加有关hilo指令的支持
  * </table>
  */
 
@@ -920,6 +921,43 @@ module ID(
 			/* 跳转指令功能 */
 			jAddr <= {pc[`PC_LENGTH-1:28], inst[25:0], 2'b00};
 			jCe <= `ENABLE;
+			/*HILO*/
+			hiRdCe <= `DISABLE;
+			loRdCe <= `DISABLE;
+		end
+	end
+
+	/**
+	 * instructions		SLT
+	 * type				HILO
+	 * detail			rd <- (rs < rt)
+	 * inst[31:26]	==	6'b000000
+	 * inst[25:21]	==	rs
+	 * inst[20:16]	==	rt
+	 * inst[15:11]	==	rd
+	 * inst[10:0]	==	11'b000_0010_1010
+	 */
+	always@(*) begin
+		/* 复位信号rst无效 */
+		if((rst == `DISABLE) && (inst[31:26] == 6'b000000) && (inst[10:0] == 11'b000_0010_1010))
+		begin
+			/* op传递CMD操作码 */
+			op <= `CMD_SLT;
+			/* a读使能信号，与地址 */
+			regaRd <= `ENABLE;
+			regaAddr <= inst[25:21];
+			/* b读使能信号，与地址 */
+			regbRd <= `ENABLE;
+			regbAddr <= inst[20:16];
+			/* c写使能信号，与地址 */
+			regcWr <= `ENABLE;
+			regcAddr <= inst[15:11];
+			/* 寄存器a和b数据输出 */
+			regaData <= regaData_i;
+			regbData <= regbData_i;
+			/* 跳转指令功能 */
+			jAddr <= `PC_NULL;
+			jCe <= `DISABLE;
 			/*HILO*/
 			hiRdCe <= `DISABLE;
 			loRdCe <= `DISABLE;

@@ -94,8 +94,8 @@ module MIPS(
 	/* HILO MEM */
 	wire hiWtCe;										//MEM->HILO，hi寄存器写使能信号
 	wire loWtCe;										//MEM->HILO，lo寄存器写使能信号
-	wire hiWtData;										//MEM->HILO，hi寄存器所写的数据
-	wire loWtData;										//MEM->HILO，lo寄存器所写的数据
+	wire[`REG_LENGTH-1:0] hiWtData;						//MEM->HILO，hi寄存器所写的数据
+	wire[`REG_LENGTH-1:0] loWtData;						//MEM->HILO，lo寄存器所写的数据
 
 
 	/* module */
