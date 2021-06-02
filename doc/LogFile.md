@@ -5,6 +5,7 @@
 - [Version 3](#version-3)
 - [Version 4](#version-4)
 - [Version 5](#version-5)
+- [Version 6](#version-6)
 
 # Version 1
 * 2021.04.28
@@ -89,5 +90,11 @@
 	8. 添加对除法指令*DIV*和*DIVU*的支持
 	9. *MIPS 12条整数指令*全部添加且测试完成
 	10. ***version5***完成
-
+# Version 6
+* 2021.06.02
+	1. 添加通用输入输出模块**GPIO**(`GPIO.vh`，`GPIO.v`)
+	2. 向**SOC**(`SOC.v`)中添加**GPIO**模块
+	3. 向`test_bench.v`中添加对**GPIO**的输入输出测试部分
+	4. **GPIO**测试通过
+	5. ***version6***完成
 
