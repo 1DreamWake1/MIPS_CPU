@@ -991,7 +991,7 @@ module ID(
 			regaData <= {`REG_LENGTH{1'b0}};
 			regbData <= {`REG_LENGTH{1'b0}};
 			/* 跳转指令功能 */
-			jAddr <= {{14{inst[15]}}, inst[16:0], 2'b00};
+			jAddr <= {pc + {{14{inst[15]}}, inst[16:0], 2'b00}};
 			jCe <= ((regaData_i[`REG_LENGTH-1] == 1'b0) && (regaData_i != {`REG_LENGTH{1'b0}})) ? `ENABLE : `DISABLE;
 			/*HILO*/
 			hiRdCe <= `DISABLE;
@@ -1026,7 +1026,7 @@ module ID(
 			regaData <= {`REG_LENGTH{1'b0}};
 			regbData <= {`REG_LENGTH{1'b0}};
 			/* 跳转指令功能 */
-			jAddr <= {{14{inst[15]}}, inst[16:0], 2'b00};
+			jAddr <= {pc + {{14{inst[15]}}, inst[16:0], 2'b00}};
 			jCe <= ((regaData_i[`REG_LENGTH-1] == 1'b1) && (regaData_i != {`REG_LENGTH{1'b0}})) ? `ENABLE : `DISABLE;
 			/*HILO*/
 			hiRdCe <= `DISABLE;
