@@ -2,7 +2,7 @@
  * @file	MEM.v
  * @author	LiuChuanXi
  * @date	2021.06.02
- * @version	V5.0
+ * @version	V5.1
  * @brief	内存管理模块，用于区分操作寄存器堆还是内存模块
  * @par	修改日志
  * <table>
@@ -11,6 +11,7 @@
  * <tr><td>2021.05.27	<td>V3.1		<td>LiuChuanXi	<td>增加对lw和sw指令的支持
  * <tr><td>2021.05.29	<td>V4.0		<td>LiuChuanXi	<td>开始Version4，增加对空指令nop的支持
  * <tr><td>2021.06.02	<td>V5.0		<td>LiuChuanXi	<td>开始version5，更改注释和变量框架
+ * <tr><td>2021.06.02	<td>V5.1		<td>LiuChuanXi	<td>添加有关HILO模块内容，未添加有关hilo指令的支持
  * </table>
  */
 
@@ -40,15 +41,21 @@
  * @param	regWr		output，寄存器写操作控制信号
  * @param	regData		output，寄存器数据输出
  * @param	regAddr		output，寄存器地址输出
+ * @note	---HILO---
+ * @param	hiWtCe		output，hi寄存器写使能
+ * @param	loWtCe		output，lo寄存器写是能
+ * @param	hiWtData	output，hi寄存器写入数据
+ * @param	loWtData	output，lo寄存器写入数据
  * @warning	内存单元的地址宽度和数据宽度都定义为与寄存器长度相同
  * @warning	当前版本当进行写操作时，写回在下一个始终clk上升沿时写回
  * @warning	内存单元DataMem模块片选控制信号memCe，只有进行读/写操作时有效
  */
 module MEM(
-	rst, op, regcData, regcAddr, regcWr,
-	memAddr_i, memData_i, rdData,
+	rst, 
+	op, regcData, regcAddr, regcWr, memAddr_i, memData_i,
+	rdData, memAddr, wtData, memWr, memCe,
 	regData, regAddr, regWr,
-	memAddr, wtData, memWr, memCe
+	hiWtCe, loWtCe, hiWtData, loWtData
 );
 
 	/* MEM */
@@ -74,6 +81,12 @@ module MEM(
 	output reg[`REG_LENGTH-1:0] regData;		//寄存器数据输出
 	output reg[`REG_ADDR_LEN-1:0] regAddr;		//寄存器地址输出
 
+	/* HILO */
+	output reg hiWtCe;							//hi寄存器写使能
+	output reg loWtCe;							//lo寄存器写是能
+	output reg[`REG_LENGTH-1:0] hiWtData;		//hi寄存器写入数据
+	output reg[`REG_LENGTH-1:0] loWtData;		//lo寄存器写入数据
+
 
 	/* 模块初始化 */
 	initial begin
@@ -86,6 +99,11 @@ module MEM(
 		wtData <= {`REG_LENGTH{1'b0}};
 		memWr <= `DISABLE;
 		memCe <= `DISABLE;
+		/* HILO */
+		hiWtCe <= `DISABLE;
+		loWtCe <= `DISABLE;
+		hiWtData <= {`REG_LENGTH{1'b0}};
+		loWtData <= {`REG_LENGTH{1'b0}};
 	end
 
 
@@ -102,6 +120,11 @@ module MEM(
 			wtData <= {`REG_LENGTH{1'b0}};
 			memWr <= `DISABLE;
 			memCe <= `DISABLE;
+			/* HILO */
+			hiWtCe <= `DISABLE;
+			loWtCe <= `DISABLE;
+			hiWtData <= {`REG_LENGTH{1'b0}};
+			loWtData <= {`REG_LENGTH{1'b0}};
 		end
 	end
 
@@ -122,6 +145,11 @@ module MEM(
 				wtData <= memData_i;
 				memWr <= `DISABLE;
 				memCe <= `DISABLE;
+				/* HILO */
+				hiWtCe <= `DISABLE;
+				loWtCe <= `DISABLE;
+				hiWtData <= {`REG_LENGTH{1'b0}};
+				loWtData <= {`REG_LENGTH{1'b0}};
 			end
 			`CMD_ADD: begin
 				/* 寄存器部分 */
@@ -133,6 +161,11 @@ module MEM(
 				wtData <= memData_i;
 				memWr <= `DISABLE;
 				memCe <= `DISABLE;
+				/* HILO */
+				hiWtCe <= `DISABLE;
+				loWtCe <= `DISABLE;
+				hiWtData <= {`REG_LENGTH{1'b0}};
+				loWtData <= {`REG_LENGTH{1'b0}};
 			end
 			`CMD_SUB: begin
 				/* 寄存器部分 */
@@ -144,6 +177,11 @@ module MEM(
 				wtData <= memData_i;
 				memWr <= `DISABLE;
 				memCe <= `DISABLE;
+				/* HILO */
+				hiWtCe <= `DISABLE;
+				loWtCe <= `DISABLE;
+				hiWtData <= {`REG_LENGTH{1'b0}};
+				loWtData <= {`REG_LENGTH{1'b0}};
 			end
 			`CMD_AND: begin
 				/* 寄存器部分 */
@@ -155,6 +193,11 @@ module MEM(
 				wtData <= memData_i;
 				memWr <= `DISABLE;
 				memCe <= `DISABLE;
+				/* HILO */
+				hiWtCe <= `DISABLE;
+				loWtCe <= `DISABLE;
+				hiWtData <= {`REG_LENGTH{1'b0}};
+				loWtData <= {`REG_LENGTH{1'b0}};
 			end
 			`CMD_OR: begin
 				/* 寄存器部分 */
@@ -166,6 +209,11 @@ module MEM(
 				wtData <= memData_i;
 				memWr <= `DISABLE;
 				memCe <= `DISABLE;
+				/* HILO */
+				hiWtCe <= `DISABLE;
+				loWtCe <= `DISABLE;
+				hiWtData <= {`REG_LENGTH{1'b0}};
+				loWtData <= {`REG_LENGTH{1'b0}};
 			end
 			`CMD_XOR: begin
 				/* 寄存器部分 */
@@ -177,6 +225,11 @@ module MEM(
 				wtData <= memData_i;
 				memWr <= `DISABLE;
 				memCe <= `DISABLE;
+				/* HILO */
+				hiWtCe <= `DISABLE;
+				loWtCe <= `DISABLE;
+				hiWtData <= {`REG_LENGTH{1'b0}};
+				loWtData <= {`REG_LENGTH{1'b0}};
 			end
 			`CMD_SLL: begin
 				/* 寄存器部分 */
@@ -188,6 +241,11 @@ module MEM(
 				wtData <= memData_i;
 				memWr <= `DISABLE;
 				memCe <= `DISABLE;
+				/* HILO */
+				hiWtCe <= `DISABLE;
+				loWtCe <= `DISABLE;
+				hiWtData <= {`REG_LENGTH{1'b0}};
+				loWtData <= {`REG_LENGTH{1'b0}};
 			end
 			`CMD_SRL: begin
 				/* 寄存器部分 */
@@ -199,6 +257,11 @@ module MEM(
 				wtData <= memData_i;
 				memWr <= `DISABLE;
 				memCe <= `DISABLE;
+				/* HILO */
+				hiWtCe <= `DISABLE;
+				loWtCe <= `DISABLE;
+				hiWtData <= {`REG_LENGTH{1'b0}};
+				loWtData <= {`REG_LENGTH{1'b0}};
 			end
 			`CMD_SRA: begin
 				/* 寄存器部分 */
@@ -210,6 +273,11 @@ module MEM(
 				wtData <= memData_i;
 				memWr <= `DISABLE;
 				memCe <= `DISABLE;
+				/* HILO */
+				hiWtCe <= `DISABLE;
+				loWtCe <= `DISABLE;
+				hiWtData <= {`REG_LENGTH{1'b0}};
+				loWtData <= {`REG_LENGTH{1'b0}};
 			end
 			`CMD_JR: begin
 				/* 寄存器部分 */
@@ -221,6 +289,11 @@ module MEM(
 				wtData <= memData_i;
 				memWr <= `DISABLE;
 				memCe <= `DISABLE;
+				/* HILO */
+				hiWtCe <= `DISABLE;
+				loWtCe <= `DISABLE;
+				hiWtData <= {`REG_LENGTH{1'b0}};
+				loWtData <= {`REG_LENGTH{1'b0}};
 			end
 			`CMD_ADDI: begin
 				/* 寄存器部分 */
@@ -232,6 +305,11 @@ module MEM(
 				wtData <= memData_i;
 				memWr <= `DISABLE;
 				memCe <= `DISABLE;
+				/* HILO */
+				hiWtCe <= `DISABLE;
+				loWtCe <= `DISABLE;
+				hiWtData <= {`REG_LENGTH{1'b0}};
+				loWtData <= {`REG_LENGTH{1'b0}};
 			end
 			`CMD_ANDI: begin
 				/* 寄存器部分 */
@@ -243,6 +321,11 @@ module MEM(
 				wtData <= memData_i;
 				memWr <= `DISABLE;
 				memCe <= `DISABLE;
+				/* HILO */
+				hiWtCe <= `DISABLE;
+				loWtCe <= `DISABLE;
+				hiWtData <= {`REG_LENGTH{1'b0}};
+				loWtData <= {`REG_LENGTH{1'b0}};
 			end
 			`CMD_ORI: begin
 				/* 寄存器部分 */
@@ -254,6 +337,11 @@ module MEM(
 				wtData <= memData_i;
 				memWr <= `DISABLE;
 				memCe <= `DISABLE;
+				/* HILO */
+				hiWtCe <= `DISABLE;
+				loWtCe <= `DISABLE;
+				hiWtData <= {`REG_LENGTH{1'b0}};
+				loWtData <= {`REG_LENGTH{1'b0}};
 			end
 			`CMD_BEQ: begin
 				/* 寄存器部分 */
@@ -265,6 +353,11 @@ module MEM(
 				wtData <= memData_i;
 				memWr <= `DISABLE;
 				memCe <= `DISABLE;
+				/* HILO */
+				hiWtCe <= `DISABLE;
+				loWtCe <= `DISABLE;
+				hiWtData <= {`REG_LENGTH{1'b0}};
+				loWtData <= {`REG_LENGTH{1'b0}};
 			end
 			`CMD_BNE: begin
 				/* 寄存器部分 */
@@ -276,6 +369,11 @@ module MEM(
 				wtData <= memData_i;
 				memWr <= `DISABLE;
 				memCe <= `DISABLE;
+				/* HILO */
+				hiWtCe <= `DISABLE;
+				loWtCe <= `DISABLE;
+				hiWtData <= {`REG_LENGTH{1'b0}};
+				loWtData <= {`REG_LENGTH{1'b0}};
 			end
 			`CMD_XORI: begin
 				/* 寄存器部分 */
@@ -287,6 +385,11 @@ module MEM(
 				wtData <= memData_i;
 				memWr <= `DISABLE;
 				memCe <= `DISABLE;
+				/* HILO */
+				hiWtCe <= `DISABLE;
+				loWtCe <= `DISABLE;
+				hiWtData <= {`REG_LENGTH{1'b0}};
+				loWtData <= {`REG_LENGTH{1'b0}};
 			end
 			`CMD_LW: begin
 				/* 寄存器部分 */
@@ -298,6 +401,11 @@ module MEM(
 				wtData <= memData_i;
 				memWr <= `DISABLE;
 				memCe <= `ENABLE;
+				/* HILO */
+				hiWtCe <= `DISABLE;
+				loWtCe <= `DISABLE;
+				hiWtData <= {`REG_LENGTH{1'b0}};
+				loWtData <= {`REG_LENGTH{1'b0}};
 			end
 			`CMD_SW: begin
 				/* 寄存器部分 */
@@ -309,6 +417,11 @@ module MEM(
 				wtData <= memData_i;
 				memWr <= `ENABLE;
 				memCe <= `ENABLE;
+				/* HILO */
+				hiWtCe <= `DISABLE;
+				loWtCe <= `DISABLE;
+				hiWtData <= {`REG_LENGTH{1'b0}};
+				loWtData <= {`REG_LENGTH{1'b0}};
 			end
 			`CMD_LUI: begin
 				/* 寄存器部分 */
@@ -320,6 +433,11 @@ module MEM(
 				wtData <= memData_i;
 				memWr <= `DISABLE;
 				memCe <= `DISABLE;
+				/* HILO */
+				hiWtCe <= `DISABLE;
+				loWtCe <= `DISABLE;
+				hiWtData <= {`REG_LENGTH{1'b0}};
+				loWtData <= {`REG_LENGTH{1'b0}};
 			end
 			`CMD_J: begin
 				/* 寄存器部分 */
@@ -331,6 +449,11 @@ module MEM(
 				wtData <= memData_i;
 				memWr <= `DISABLE;
 				memCe <= `DISABLE;
+				/* HILO */
+				hiWtCe <= `DISABLE;
+				loWtCe <= `DISABLE;
+				hiWtData <= {`REG_LENGTH{1'b0}};
+				loWtData <= {`REG_LENGTH{1'b0}};
 			end
 			`CMD_JAL: begin
 				/* 寄存器部分 */
@@ -342,6 +465,11 @@ module MEM(
 				wtData <= memData_i;
 				memWr <= `DISABLE;
 				memCe <= `DISABLE;
+				/* HILO */
+				hiWtCe <= `DISABLE;
+				loWtCe <= `DISABLE;
+				hiWtData <= {`REG_LENGTH{1'b0}};
+				loWtData <= {`REG_LENGTH{1'b0}};
 			end
 			default: begin
 				/* 寄存器部分 */
@@ -353,6 +481,11 @@ module MEM(
 				wtData <= {`REG_LENGTH{1'b0}};
 				memWr <= `DISABLE;
 				memCe <= `DISABLE;
+				/* HILO */
+				hiWtCe <= `DISABLE;
+				loWtCe <= `DISABLE;
+				hiWtData <= {`REG_LENGTH{1'b0}};
+				loWtData <= {`REG_LENGTH{1'b0}};
 			end
 			endcase
 		end
