@@ -400,6 +400,47 @@ module EX(
 					memAddr_i <= {`REG_LENGTH{1'b0}};
 					memData_i <= {`REG_LENGTH{1'b0}};
 				end
+				`CMD_DIV: begin
+			 		/* 寄存器部分 */
+					/* 乘法计算结果由寄存器数据线和内存数据线拼接传送 */
+					if((regbData == {`REG_LENGTH{1'b0}})) begin
+						/* 被除数为0 */
+						{regcData, memData_i} <= {2{{`REG_LENGTH{1'b0}}}};
+					end
+					else if(regaData[`REG_LENGTH-1] == regbData[`REG_LENGTH-1]) begin
+						/* 两个除数符号相同，结果一定为正 */
+						{regcData, memData_i} <= regaData / regbData;
+					end
+					else begin
+						/* 两个除数符号不同，结果一定为负数 */
+						{regcData, memData_i} <= -(regaData[`REG_LENGTH-2:0] / regbData[`REG_LENGTH-2:0]);
+					end
+					/* regcData <= regaData; */
+					regcWr <= regcWr_i;
+					regcAddr <= regcAddr_i;
+					/* 非寄存器部分(RAM或IO) */
+					op <= op_i;
+					memAddr_i <= {`REG_LENGTH{1'b0}};
+					/* memData_i <= {`REG_LENGTH{1'b0}}; */
+				end
+				`CMD_DIV: begin
+			 		/* 寄存器部分 */
+					/* 乘法计算结果由寄存器数据线和内存数据线拼接传送 */
+					if((regbData == {`REG_LENGTH{1'b0}})) begin
+						/* 被除数为0 */
+						{regcData, memData_i} <= {2{{`REG_LENGTH{1'b0}}}};
+					end
+					else begin
+						{regcData, memData_i} <= regaData / regbData;
+					end
+					/* regcData <= regaData; */
+					regcWr <= regcWr_i;
+					regcAddr <= regcAddr_i;
+					/* 非寄存器部分(RAM或IO) */
+					op <= op_i;
+					memAddr_i <= {`REG_LENGTH{1'b0}};
+					/* memData_i <= {`REG_LENGTH{1'b0}}; */
+				end
 			endcase
 		end
 	end

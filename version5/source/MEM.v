@@ -568,6 +568,38 @@ module MEM(
 				hiWtData <= regcData;
 				loWtData <= memData_i;
 			end
+			`CMD_DIV: begin
+				/* 寄存器部分 */
+				regData <= regcData;
+				regAddr <= regcAddr;
+				regWr <= regcWr;
+				/* 非寄存器模块(RAM或IO) */
+				memAddr <= memAddr_i;
+				wtData <= memData_i;
+				memWr <= `DISABLE;
+				memCe <= `DISABLE;
+				/* HILO */
+				hiWtCe <= `ENABLE;
+				loWtCe <= `ENABLE;
+				hiWtData <= regcData;
+				loWtData <= memData_i;
+			end
+			`CMD_DIVU: begin
+				/* 寄存器部分 */
+				regData <= regcData;
+				regAddr <= regcAddr;
+				regWr <= regcWr;
+				/* 非寄存器模块(RAM或IO) */
+				memAddr <= memAddr_i;
+				wtData <= memData_i;
+				memWr <= `DISABLE;
+				memCe <= `DISABLE;
+				/* HILO */
+				hiWtCe <= `ENABLE;
+				loWtCe <= `ENABLE;
+				hiWtData <= regcData;
+				loWtData <= memData_i;
+			end
 			default: begin
 				/* 寄存器部分 */
 				regData <= {`REG_LENGTH{1'b0}};
