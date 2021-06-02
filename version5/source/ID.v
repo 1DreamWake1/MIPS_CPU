@@ -1034,5 +1034,44 @@ module ID(
 		end
 	end
 
+	/**
+	 * instructions		JALR
+	 * type				J
+	 * detail			1. rd(reg[31]) <- pc + 4(`PC_STEP)
+	 * detail			2. pc <- rs
+	 * inst[31:26]	==	6'b000000
+	 * inst[25:21]	==	rs
+	 * inst[20:16]	==	5'b00000
+	 * inst[15:11]	==	rd
+	 * inst[10:6]	==	hint
+	 * inst[5:0]	==	6'b001001
+	 */
+	always@(*) begin
+		/* 复位信号rst无效 */
+		if((rst == `DISABLE) && (inst[31:26] == 6'b000000) && (inst[20:16] == 5'b00000) && (inst[5:0] == 6'b001001)) begin
+			/* op传递CMD操作码 */
+			op <= `CMD_JALR;
+			/* a读使能信号，与地址 */
+			regaRd <= `ENABLE;
+			regaAddr <= inst[25:21];
+			/* b读使能信号，与地址 */
+			regbRd <= `DISABLE;
+			regbAddr <= {`REG_ADDR_LEN{1'b0}};
+			/* c写使能信号，与地址 */
+			regcWr <= `ENABLE;
+			regcAddr <= inst[15:11];
+			/* 寄存器a和b数据输出 */
+			/* 注意：非流水线下存当前jal指令的下一条指令的地址，即pc+4(`PC_STEP) */
+			regaData <= pc + `PC_STEP;
+			regbData <= {`REG_LENGTH{1'b0}};
+			/* 跳转指令功能 */
+			jAddr <= {regaData_i[`REG_LENGTH-1:2], 2'b00};
+			jCe <= `ENABLE;
+			/*HILO*/
+			hiRdCe <= `DISABLE;
+			loRdCe <= `DISABLE;
+		end
+	end
+
 
 endmodule //module ID

@@ -349,6 +349,16 @@ module EX(
 					memAddr_i <= {`REG_LENGTH{1'b0}};
 					memData_i <= {`REG_LENGTH{1'b0}};
 				end
+				`CMD_JALR: begin
+			 		/* 寄存器部分 */
+					regcData <= regaData;
+					regcWr <= regcWr_i;
+					regcAddr <= regcAddr_i;
+					/* 非寄存器部分(RAM或IO) */
+					op <= op_i;
+					memAddr_i <= {`REG_LENGTH{1'b0}};
+					memData_i <= {`REG_LENGTH{1'b0}};
+				end
 				default: begin
 					/* 输出全零 */
 					regcData <= {`REG_LENGTH{1'b0}};
