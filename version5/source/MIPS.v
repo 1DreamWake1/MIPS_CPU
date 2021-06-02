@@ -1,8 +1,8 @@
 /**
  * @file	MIPS.v
  * @author	LiuChuanXi
- * @date	2021.05.27
- * @version	V3.2
+ * @date	2021.06.02
+ * @version	V5.1
  * @brief	MIPS CPU顶层模块
  * @par	修改日志
  * <table>
@@ -13,6 +13,8 @@
  * <tr><td>2021.05.27	<td>V3.0		<td>LiuChuanXi	<td>开始Version3，增加MEM模块
  * <tr><td>2021.05.27	<td>V3.1		<td>LiuChuanXi	<td>增加连线的注释，增加与DataMem的输入输出口
  * <tr><td>2021.05.27	<td>V3.2		<td>LiuChuanXi	<td>内存管理MEM模块添加成功
+ * <tr><td>2021.06.02	<td>V5.0		<td>LiuChuanXi	<td>开始version5，更改注释和变量框架
+ * <tr><td>2021.06.02	<td>V5.1		<td>LiuChuanXi	<td>添加HILO模块
  * </table>
  */
 
@@ -23,11 +25,14 @@
 /**
  * @author	LiuChuanXi
  * @brief	MIPS CPU 顶层模块
+ * @note	---MIPS---
  * @param	clk			input，时钟信号
  * @param	rst			input，复位信号，高有效
+ * @note	---InstMem(ROM)---
  * @param	inst		input，从指令存储器InstMem(ROM)读入的指令
  * @param	romCe		output，指令存储器InstMem(ROM)的片选使能信号
  * @param	pc			output，程序计数器
+ * @note	---MIOC---
  * @param	rdData		input，从DataMem(RAM)读入的数据
  * @param	memAddr		output，访问DataMem(RAM)的地址输出
  * @param	wtData		output，向DataMem(RAM)对应地址写入的数据
@@ -41,17 +46,17 @@ module MIPS(
 	rdData, memAddr, wtData, memWr, memCe
 );
 
-	/* input */
+	/* MIPS */
 	input wire clk;								//时钟信号
 	input wire rst;								//复位信号
-	input wire[`INST_LENGTH-1:0] inst;			//从指令存储器InstMem(ROM)读入的指令
-	input wire[`REG_LENGTH-1:0] rdData;			//从DataMem(RAM)读入的数据
 
-	/* output 1 */
+	/* InstMem(ROM) */
+	input wire[`INST_LENGTH-1:0] inst;			//从指令存储器InstMem(ROM)读入的指令
 	output wire romCe;							//指令存储器InstMem(ROM)的片选使能信号
 	output wire[`PC_LENGTH-1:0] pc;				//程序计数器
 
-	/* output 2 */
+	/* MIOC */
+	input wire[`REG_LENGTH-1:0] rdData;			//从DataMem(RAM)读入的数据
 	output wire[`REG_LENGTH-1:0] memAddr;		//访问DataMem(RAM)的地址输出
 	output wire[`REG_LENGTH-1:0] wtData;		//向DataMem(RAM)对应地址写入的数据
 	output wire memWr;							//DataMem(RAM)对应的读写操作控制信号(read:`DISABLE，write:`ENABLE)
@@ -81,6 +86,16 @@ module MIPS(
 	/* IF ID */
 	wire[`PC_LENGTH-1:0] jAddr;							//ID->IF，跳转指令跳转目标地址
 	wire jCe;											//ID->IF，跳转指令跳转使能信号
+	/* HILO ID */
+	wire hiRdCe;										//ID->HILO，hi寄存器读使能信号
+	wire loRdCe;										//ID->HILO，lo寄存器读使能信号
+	wire[`REG_LENGTH-1:0] hiRdData;						//HILO->ID，hi寄存器读出的数据
+	wire[`REG_LENGTH-1:0] loRdData;						//HILO->ID，lo寄存器读出的数据
+	/* HILO MEM */
+	wire hiWtCe;										//MEM->HILO，hi寄存器写使能信号
+	wire loWtCe;										//MEM->HILO，lo寄存器写使能信号
+	wire hiWtData;										//MEM->HILO，hi寄存器所写的数据
+	wire loWtData;										//MEM->HILO，lo寄存器所写的数据
 
 
 	/* module */
@@ -93,7 +108,8 @@ module MIPS(
 		.rst(rst), .inst(inst), .regaData_i(regaData_i), .regbData_i(regbData_i), .pc(pc),
 		.op(op_i), .regaData(regaData), .regbData(regbData), .regcWr(regcWr_i), .regcAddr(regcAddr_i),
 		.regaRd(regaRd), .regbRd(regbRd), .regaAddr(regaAddr), .regbAddr(regbAddr),
-		.jCe(jCe), .jAddr(jAddr)
+		.jCe(jCe), .jAddr(jAddr),
+		.hiRdCe(hiRdCe), .loRdCe(loRdCe), .hiRdData(hiRdData), .loRdData(loRdData)
 	);
 	EX ex_m(
 		.rst(rst),
@@ -111,7 +127,13 @@ module MIPS(
 		.rst(rst), .op(op), .regcData(regcData), .regcAddr(regcAddr), .regcWr(regcWr),
 		.memAddr_i(memAddr_i), .memData_i(memData_i), .rdData(rdData),
 		.regData(regData), .regAddr(regAddr), .regWr(regWr),
-		.memAddr(memAddr), .wtData(wtData), .memWr(memWr), .memCe(memCe)
+		.memAddr(memAddr), .wtData(wtData), .memWr(memWr), .memCe(memCe),
+		.hiWtCe(hiWtCe), .loWtCe(loWtCe), .hiWtData(hiWtData), .loWtData(loWtData)
+	);
+	HILO hilo_m(
+		.clk(clk), .rst(rst),
+		.hiRdCe(hiRdCe), .loRdCe(loRdCe), .hiRdData(hiRdData), .loRdData(loRdData),
+		.hiWtCe(hiWtCe), .loWtCe(loWtCe), .hiWtData(hiWtData), .loWtData(loWtData)
 	);
 
 
