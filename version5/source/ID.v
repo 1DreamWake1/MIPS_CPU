@@ -1,8 +1,8 @@
 /**
  * @file	ID.vh
  * @author	LiuChuanXi
- * @date	2021.05.29
- * @version	V4.0
+ * @date	2021.06.02
+ * @version	V5.0
  * @brief	MIPS_CPU指令译码ID模块
  * @par	修改日志
  * <table>
@@ -16,6 +16,7 @@
  * <tr><td>2021.05.26	<td>V2.2		<td>LiuChuanXi	<td>J型指令完成，version2完成
  * <tr><td>2021.05.27	<td>V3.0		<td>LiuChuanXi	<td>开始version3,增加对lw和sw指令的支持
  * <tr><td>2021.05.29	<td>V4.0		<td>LiuChuanXi	<td>开始version4，增加对空指令nop的支持
+ * <tr><td>2021.06.02	<td>V5.0		<td>LiuChuanXi	<td>开始version5，更改注释和变量框架
  * </table>
  */
 
@@ -26,53 +27,61 @@
 /**
  * @author	LiuChuanXi
  * @brief	ID(译码)模块
+ * @note	---ID---
  * @param	rst			input，复位信号，高有效
+ * @note	---IF---
+ * @param	pc			input，跳转指令功能，当前的PC
+ * @param	jAddr		output，跳转指令功能，跳转地址
+ * @param	jCe			output，跳转指令功能，跳转使能信号
+ * @note	---InstMem(ROM)---
  * @param	inst		input，从InstMem读过来的指令
+ * @note	---RegFile---
+ * @param	regaRd		output，寄存器A读控制信号
+ * @param	regbRd		output，寄存器B读控制信号
+ * @param	regaAddr	output，寄存器A地址输出
+ * @param	regbAddr	output，寄存器B地址输出
  * @param	regaData_i	input，寄存器A数据输入
  * @param	regbData_i	input，寄存器B数据输入
- * @param	pc			input，跳转指令功能，当前的PC
+ * @note	---EX---
  * @param	op			output，指令译码后对应的指令编码(CMD_XXX)
  * @param	regaData	output，寄存器A数据输出
  * @param	regbData	output，寄存器B数据输出
  * @param	regcWr		output，目的寄存器C写控制信号
  * @param	regcAddr	output，目的寄存器C地址
- * @param	regaRd		output，寄存器A读控制信号
- * @param	regbRd		output，寄存器B读控制信号
- * @param	regaAddr	output，寄存器A地址输出
- * @param	regbAddr	output，寄存器B地址输出
- * @param	jAddr		output，跳转指令功能，跳转地址
- * @param	jCe			output，跳转指令功能，跳转使能信号
  */
 module ID(
-	rst, inst, regaData_i, regbData_i, pc,
-	op, regaData, regbData, regcWr, regcAddr,
-	regaRd, regbRd, regaAddr, regbAddr,
-	jAddr, jCe
+	rst,
+	pc, jAddr, jCe,
+	inst,
+	regaRd, regbRd, regaAddr, regbAddr, regaData_i, regbData_i,
+	op, regaData, regbData, regcWr, regcAddr
 );
 
-	/* input */
+	/* ID */
 	input wire rst;									//复位信号
+
+	/* IF */
+	input wire[`PC_LENGTH-1:0] pc;					//跳转指令功能，当前的PC
+	output reg[`PC_LENGTH-1:0] jAddr;				//跳转指令功能，跳转地址
+	output reg jCe;									//跳转指令功能，跳转使能信号
+
+	/* InstMem(ROM) */
 	input wire[`INST_LENGTH-1:0] inst;				//输入的指令
+
+	/* RegFile */
+	output reg regaRd;								//寄存器A读控制信号
+	output reg regbRd;								//寄存器B读控制信号
+	output reg[`REG_ADDR_LEN-1:0] regaAddr;			//寄存器A地址输出
+	output reg[`REG_ADDR_LEN-1:0] regbAddr;			//寄存器B地址输出
 	input wire[`REG_LENGTH-1:0] regaData_i;			//寄存器A数据输入
 	input wire[`REG_LENGTH-1:0] regbData_i;			//寄存器B数据输入
-	input wire[`PC_LENGTH-1:0] pc;					//跳转指令功能，当前的PC
 	
-	/* output 1 */
+	/* EX */
 	output reg[`OP_LENGTH-1:0] op;					//指令译码后对应的指令编码(CMD_XXX)
 	output reg[`REG_LENGTH-1:0] regaData;			//寄存器A数据输出
 	output reg[`REG_LENGTH-1:0] regbData;			//寄存器B数据输出
 	output reg regcWr;								//目的寄存器C写控制信号
 	output reg[`REG_ADDR_LEN-1:0] regcAddr;			//目的寄存器C地址
-	
-	/* output 2 */
-	output reg regaRd;								//寄存器A读控制信号
-	output reg regbRd;								//寄存器B读控制信号
-	output reg[`REG_ADDR_LEN-1:0] regaAddr;			//寄存器A地址输出
-	output reg[`REG_ADDR_LEN-1:0] regbAddr;			//寄存器B地址输出
-
-	/* output 3 */
-	output reg[`PC_LENGTH-1:0] jAddr;				//跳转指令功能，跳转地址
-	output reg jCe;									//跳转指令功能，跳转使能信号
 
 
 	/* 模块初始化 */
