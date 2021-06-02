@@ -60,7 +60,7 @@ module ID(
 	pc, jAddr, jCe,
 	inst,
 	regaRd, regbRd, regaAddr, regbAddr, regaData_i, regbData_i,
-	op, regaData, regbData, regcWr, regcAddr，
+	op, regaData, regbData, regcWr, regcAddr,
 	hiRdCe, loRdCe, hiRdData, loRdData
 );
 
