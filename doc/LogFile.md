@@ -4,6 +4,7 @@
 - [Version 2](#version-2)
 - [Version 3](#version-3)
 - [Version 4](#version-4)
+- [Version 5](#version-5)
 
 # Version 1
 * 2021.04.28
@@ -76,5 +77,11 @@
 	3. ***version4***完成
 	4. 添加对***version5***和***version6***的设计
 	5. 更新`README.md`有关***version5***和***version6***的描述
+# Version 5
+* 2021.06.02
+	1. 尝试了两天的***vivado-v4***，下板失败，继续更新后续版本
+	2. 开始***version5****
+	3. 添加模块**HI/LO**(`HILO.v`)
+	4. 指令*SLT*测试通过
 
 
