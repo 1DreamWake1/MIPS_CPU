@@ -2,7 +2,7 @@
  * @file	ID.vh
  * @author	LiuChuanXi
  * @date	2021.06.02
- * @version	V5.0
+ * @version	V5.1
  * @brief	MIPS_CPU指令译码ID模块
  * @par	修改日志
  * <table>
@@ -17,6 +17,7 @@
  * <tr><td>2021.05.27	<td>V3.0		<td>LiuChuanXi	<td>开始version3,增加对lw和sw指令的支持
  * <tr><td>2021.05.29	<td>V4.0		<td>LiuChuanXi	<td>开始version4，增加对空指令nop的支持
  * <tr><td>2021.06.02	<td>V5.0		<td>LiuChuanXi	<td>开始version5，更改注释和变量框架
+ * <tr><td>2021.06.02	<td>V5.1		<td>LiuChuanXi	<td>添加有关HILO模块内容，未添加有关hilo指令的支持
  * </table>
  */
 
@@ -48,13 +49,19 @@
  * @param	regbData	output，寄存器B数据输出
  * @param	regcWr		output，目的寄存器C写控制信号
  * @param	regcAddr	output，目的寄存器C地址
+ * @note	---HILO---
+ * @param	hiRdCe		output，hi寄存器读使能信号
+ * @param	loRdCe		output，lo寄存器读使能信号
+ * @param	hiRdData	input，hi寄存器读出的数据
+ * @param	loRdData	input，lo寄存器读出的数据
  */
 module ID(
 	rst,
 	pc, jAddr, jCe,
 	inst,
 	regaRd, regbRd, regaAddr, regbAddr, regaData_i, regbData_i,
-	op, regaData, regbData, regcWr, regcAddr
+	op, regaData, regbData, regcWr, regcAddr，
+	hiRdCe, loRdCe, hiRdData, loRdData
 );
 
 	/* ID */
@@ -83,6 +90,12 @@ module ID(
 	output reg regcWr;								//目的寄存器C写控制信号
 	output reg[`REG_ADDR_LEN-1:0] regcAddr;			//目的寄存器C地址
 
+	/* HILO */
+	output reg hiRdCe;								//hi寄存器读使能信
+	output reg loRdCe;								//lo寄存器读使能信
+	input wire[`REG_LENGTH-1:0] hiRdData;			//hi寄存器读出的数据
+	input wire[`REG_LENGTH-1:0] loRdData;			//lo寄存器读出的数据
+
 
 	/* 模块初始化 */
 	initial begin
@@ -99,6 +112,9 @@ module ID(
 		/* 跳转指令功能关闭 */
 		jAddr <= `PC_NULL;
 		jCe <= `DISABLE;
+		/*HILO*/
+		hiRdCe <= `DISABLE;
+		loRdCe <= `DISABLE;
 	end
 
 
@@ -121,6 +137,9 @@ module ID(
 			/* 跳转指令功能 */
 			jAddr <= `PC_NULL;
 			jCe <= `DISABLE;
+			/*HILO*/
+			hiRdCe <= `DISABLE;
+			loRdCe <= `DISABLE;
 		end
 	end
 
@@ -154,6 +173,9 @@ module ID(
 			/* 跳转指令功能 */
 			jAddr <= `PC_NULL;
 			jCe <= `DISABLE;
+			/*HILO*/
+			hiRdCe <= `DISABLE;
+			loRdCe <= `DISABLE;
 		end
 	end
 
@@ -190,6 +212,9 @@ module ID(
 			/* 跳转指令功能 */
 			jAddr <= `PC_NULL;
 			jCe <= `DISABLE;
+			/*HILO*/
+			hiRdCe <= `DISABLE;
+			loRdCe <= `DISABLE;
 		end
 	end
 
@@ -226,6 +251,9 @@ module ID(
 			/* 跳转指令功能 */
 			jAddr <= `PC_NULL;
 			jCe <= `DISABLE;
+			/*HILO*/
+			hiRdCe <= `DISABLE;
+			loRdCe <= `DISABLE;
 		end
 	end
 
@@ -262,6 +290,9 @@ module ID(
 			/* 跳转指令功能 */
 			jAddr <= `PC_NULL;
 			jCe <= `DISABLE;
+			/*HILO*/
+			hiRdCe <= `DISABLE;
+			loRdCe <= `DISABLE;
 		end
 	end
 
@@ -298,6 +329,9 @@ module ID(
 			/* 跳转指令功能 */
 			jAddr <= `PC_NULL;
 			jCe <= `DISABLE;
+			/*HILO*/
+			hiRdCe <= `DISABLE;
+			loRdCe <= `DISABLE;
 		end
 	end
 
@@ -334,6 +368,9 @@ module ID(
 			/* 跳转指令功能 */
 			jAddr <= `PC_NULL;
 			jCe <= `DISABLE;
+			/*HILO*/
+			hiRdCe <= `DISABLE;
+			loRdCe <= `DISABLE;
 		end
 	end
 
@@ -370,6 +407,9 @@ module ID(
 			/* 跳转指令功能 */
 			jAddr <= `PC_NULL;
 			jCe <= `DISABLE;
+			/*HILO*/
+			hiRdCe <= `DISABLE;
+			loRdCe <= `DISABLE;
 		end
 	end
 
@@ -406,6 +446,9 @@ module ID(
 			/* 跳转指令功能 */
 			jAddr <= `PC_NULL;
 			jCe <= `DISABLE;
+			/*HILO*/
+			hiRdCe <= `DISABLE;
+			loRdCe <= `DISABLE;
 		end
 	end
 
@@ -442,6 +485,9 @@ module ID(
 			/* 跳转指令功能 */
 			jAddr <= `PC_NULL;
 			jCe <= `DISABLE;
+			/*HILO*/
+			hiRdCe <= `DISABLE;
+			loRdCe <= `DISABLE;
 		end
 	end
 
@@ -479,6 +525,9 @@ module ID(
 			/* 注意：这里直接将从寄存器取来的地址最低两位变成2'b00 */
 			jAddr <= {regaData_i[`PC_LENGTH-1:2], 2'b00};
 			jCe <= `ENABLE;
+			/*HILO*/
+			hiRdCe <= `DISABLE;
+			loRdCe <= `DISABLE;
 		end
 	end
 
@@ -511,6 +560,9 @@ module ID(
 			/* 跳转指令功能 */
 			jAddr <= `PC_NULL;
 			jCe <= `DISABLE;
+			/*HILO*/
+			hiRdCe <= `DISABLE;
+			loRdCe <= `DISABLE;
 		end
 	end
 
@@ -543,6 +595,9 @@ module ID(
 			/* 跳转指令功能 */
 			jAddr <= `PC_NULL;
 			jCe <= `DISABLE;
+			/*HILO*/
+			hiRdCe <= `DISABLE;
+			loRdCe <= `DISABLE;
 		end
 	end
 
@@ -575,6 +630,9 @@ module ID(
 			/* 跳转指令功能 */
 			jAddr <= `PC_NULL;
 			jCe <= `DISABLE;
+			/*HILO*/
+			hiRdCe <= `DISABLE;
+			loRdCe <= `DISABLE;
 		end
 	end
 
@@ -607,6 +665,9 @@ module ID(
 			/* 跳转指令功能 */
 			jAddr <= `PC_NULL;
 			jCe <= `DISABLE;
+			/*HILO*/
+			hiRdCe <= `DISABLE;
+			loRdCe <= `DISABLE;
 		end
 	end
 
@@ -644,6 +705,9 @@ module ID(
 			/* 跳转指令功能 */
 			jAddr <= `PC_NULL;
 			jCe <= `DISABLE;
+			/*HILO*/
+			hiRdCe <= `DISABLE;
+			loRdCe <= `DISABLE;
 		end
 	end
 
@@ -682,6 +746,9 @@ module ID(
 			/* 跳转指令功能 */
 			jAddr <= `PC_NULL;
 			jCe <= `DISABLE;
+			/*HILO*/
+			hiRdCe <= `DISABLE;
+			loRdCe <= `DISABLE;
 		end
 	end
 
@@ -714,6 +781,9 @@ module ID(
 			/* 跳转指令功能 */
 			jAddr <= (regaData_i == regbData_i) ? (pc + {{14{inst[15]}}, inst[15:0], 2'b00}) : `PC_NULL;
 			jCe <= (regaData_i == regbData_i) ? `ENABLE : `DISABLE;
+			/*HILO*/
+			hiRdCe <= `DISABLE;
+			loRdCe <= `DISABLE;
 		end
 	end
 
@@ -746,6 +816,9 @@ module ID(
 			/* 跳转指令功能 */
 			jAddr <= (regaData_i != regbData_i) ? (pc + {{14{inst[15]}}, inst[15:0], 2'b00}) : `PC_NULL;
 			jCe <= (regaData_i != regbData_i) ? `ENABLE : `DISABLE;
+			/*HILO*/
+			hiRdCe <= `DISABLE;
+			loRdCe <= `DISABLE;
 		end
 	end
 
@@ -779,6 +852,9 @@ module ID(
 			/* 跳转指令功能 */
 			jAddr <= `PC_NULL;
 			jCe <= `DISABLE;
+			/*HILO*/
+			hiRdCe <= `DISABLE;
+			loRdCe <= `DISABLE;
 		end
 	end
 
@@ -809,6 +885,9 @@ module ID(
 			/* 跳转指令功能 */
 			jAddr <= {pc[`PC_LENGTH-1:28], inst[25:0], 2'b00};
 			jCe <= `ENABLE;
+			/*HILO*/
+			hiRdCe <= `DISABLE;
+			loRdCe <= `DISABLE;
 		end
 	end
 
@@ -841,6 +920,9 @@ module ID(
 			/* 跳转指令功能 */
 			jAddr <= {pc[`PC_LENGTH-1:28], inst[25:0], 2'b00};
 			jCe <= `ENABLE;
+			/*HILO*/
+			hiRdCe <= `DISABLE;
+			loRdCe <= `DISABLE;
 		end
 	end
 
